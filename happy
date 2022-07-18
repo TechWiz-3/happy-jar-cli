@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+
+# Happy jar cli, inspired by https://github.com/michelle/happy
+# Created by Zac the Wise
+# License: GPL-v3.0
+
+# Add a happy note, lists with the date and time
+# View all
+# Get a random one
+# Get by date
+# Get until date
+
+from datetime import datetime
+from os.path import expanduser
+from sys import argv
+from os.path import exists
+
+HOME = expanduser("~")
+
+
+def write_file(payload, time=None):
+
+    if time == None:
+        time = datetime.today()
+        # add a strftime
+
+    if exists(f"{HOME}/happyjar.txt"):
+        with open(f"{HOME}/happyjar.txt", "a") as happy_file:
+            happy_file.write(f"{time}: {payload}\n\n")
+    else:
+        with open(f"{HOME}/happyjar.txt", "w") as happy_file:
+            happy_file.write(f"{time}: {payload}\n\n")
+
+def read_file():
+    with open(f"{HOME}/happyjar.txt", "r") as happy_file:
+        for line in happy_file:
+            print(line)
+
+
+if __name__ == "__main__":
+    read_file()
+    message = ""
+    given_args  = argv
+    from args import args
+    command, info = args(given_args)
+    if command == "write":
+        for word in given_args:
+            message += f"{word} "
+        last_word = message[-1]
+        last_word_fixed = last_word[-1]
+        write_file(message)
+        exit()
+    elif command == "show all":
+        read_file()
+        exit()
+    elif command == "error":
+        print(f"Error occurred: {info}")
+        exit()
+
