@@ -22,7 +22,7 @@ def write_file(payload, time=None):
 
     if time == None:
         time = datetime.today()
-        # add a strftime
+        time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
 
     if exists(f"{HOME}/happyjar.txt"):
         with open(f"{HOME}/happyjar.txt", "a") as happy_file:
@@ -38,17 +38,17 @@ def read_file():
 
 
 if __name__ == "__main__":
-    read_file()
     message = ""
     given_args  = argv
     from args import args
     command, info = args(given_args)
     if command == "write":
-        for word in given_args:
-            message += f"{word} "
-        last_word = message[-1]
-        last_word_fixed = last_word[-1]
-        write_file(message)
+        payload = info
+        if len(payload) == 1:
+            write_file(payload[0])
+        else:
+            payload = " ".join(payload)
+            write_file(payload)
         exit()
     elif command == "show all":
         read_file()

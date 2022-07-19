@@ -12,5 +12,5 @@ def args(args):
         # if the option isn't recognised as above
         return "error", "unrecognised usage, please refer to happy --help"
     else:
-        payload = args[2:]
+        payload = args[1:]
         return "write", payload
