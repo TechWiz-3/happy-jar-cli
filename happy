@@ -53,6 +53,9 @@ if __name__ == "__main__":
     elif command == "show all":
         read_file()
         exit()
+    elif command == "help":
+        from help import Help
+        Help.main()
     elif command == "error":
         print(f"Error occurred: {info}")
         exit()

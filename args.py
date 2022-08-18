@@ -9,6 +9,8 @@ def args(args):
     if "-" in args[1] or "--" in args[1]:  # options being used
         if args[1] in ("-a" "--all"):
             return "show all", None
+        if args[1] in ("-h", "--help"):
+            return "help", None
         # if the option isn't recognised as above
         return "error", "unrecognised usage, please refer to happy --help"
     else:
