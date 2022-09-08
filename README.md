@@ -17,8 +17,8 @@ cp ~/happy-jar-cli/happy /usr/local/bin && chmod +x /usr/local/bin/happy
 ## Usage
 
 ```sh
-$ ./happy -h
-usage: happy [-h] [--bruh] {log,get} ...
+$ happy --help
+usage: happy [-h] {log,get} ...
 
 Log your good memories and gratitiude.
 
@@ -29,7 +29,6 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-  --bruh      bruh
 
 examples:
 happy log "i am so happy because you starred this project's repo on github xDD"
