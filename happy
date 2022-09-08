@@ -67,8 +67,6 @@ if __name__ == "__main__":
         description=description, epilog=textwrap.dedent(epilog)
     )
 
-    parser.add_argument("--bruh", action='store_true', help="bruh")
-
 
     subparsers = parser.add_subparsers(dest='command')
 
