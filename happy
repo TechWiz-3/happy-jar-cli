@@ -14,6 +14,9 @@ from datetime import datetime
 from os.path import expanduser
 from sys import argv
 from os.path import exists
+import argparse
+import textwrap
+import re
 
 HOME = expanduser("~")
 
@@ -26,37 +29,59 @@ def write_file(payload, time=None):
 
     if exists(f"{HOME}/happyjar.txt"):
         with open(f"{HOME}/happyjar.txt", "a") as happy_file:
-            happy_file.write(f"{time}: {payload}\n\n")
+            happy_file.write(f"{time}: {payload}\n")
     else:
         with open(f"{HOME}/happyjar.txt", "w") as happy_file:
-            happy_file.write(f"{time}: {payload}\n\n")
+            happy_file.write(f"{time}: {payload}\n")
 
-def read_file():
-    with open(f"{HOME}/happyjar.txt", "r") as happy_file:
-        for line in happy_file:
-            print(line)
+def read_file(date=False, today=False):
+    if not date and not today:  # assume the whole file should be printed
+        with open(f"{HOME}/happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                print(line)
+    elif today:
+        time = datetime.today()
+        today = time.strftime("%A %-d/%b/%Y")
+        dt_re = re.compile(f"^{today}")
 
+        with open(f"{HOME}/happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                if dt_re.match(line):
+                    print(line)
 
 if __name__ == "__main__":
-    message = ""
-    given_args  = argv
-    from args import args
-    command, info = args(given_args)
-    if command == "write":
-        payload = info
-        if len(payload) == 1:
-            write_file(payload[0])
-        else:
-            payload = " ".join(payload)
-            write_file(payload)
-        exit()
-    elif command == "show all":
-        read_file()
-        exit()
-    elif command == "help":
-        from help import Help
-        Help.main()
-    elif command == "error":
-        print(f"Error occurred: {info}")
-        exit()
 
+    description = "Log your good memories and gratitiude."
+    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\nhappy get all"
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description, epilog=textwrap.dedent(epilog)
+    )
+
+    parser.add_argument("--bruh", action='store_true', help="bruh")
+
+
+    subparsers = parser.add_subparsers(dest='command')
+
+    log = subparsers.add_parser("log", help="logs an entry")
+    log.add_argument("log_entry", help="log message in quotes")
+
+    get = subparsers.add_parser("get", help="gets entries")
+    get.add_argument("all", help="gets all entries", nargs="?")
+    get.add_argument("today", help="gets today's entries", nargs="?")
+    get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+
+    args = parser.parse_args(argv[1:])
+
+    if args.command == "log":
+        write_file(args.log_entry)
+        exit()
+    if args.command == "get":
+        if args.all == "today":
+            read_file(today=True)
+            exit()
+        elif args.all == "all":
+            read_file()
+        else:
+            read_file()
+            exit()

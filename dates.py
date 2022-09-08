@@ -7,6 +7,7 @@ class Dates():
     def get_date_items(date):
 
         if date.lower() == "today":
+            pass
             # get dt
 
             # strftime
