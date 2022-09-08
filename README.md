@@ -14,6 +14,10 @@ git clone https://github.com/TechWiz-3/happy-jar-cli.git
 cp ~/happy-jar-cli/happy /usr/local/bin && chmod +x /usr/local/bin/happy
 ```
 
+## What is it?
+<img src="./media/happy.jpg" width="400px"></img>  
+[Source](https://twitter.com/imovesactive/status/1274960313863950337)
+
 ## Usage
 
 ```sh
