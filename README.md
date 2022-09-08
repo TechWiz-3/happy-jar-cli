@@ -7,6 +7,15 @@ The happy jar is stored as a txt file in your home dir.
 Write to it with `happy log "happy text here :)"`  
 View logs with `happy get all` or `happy get today`  
 
+## Install
+```sh
+cd ~
+git clone https://github.com/TechWiz-3/happy-jar-cli.git
+cp ~/happy-jar-cli/happy /usr/local/bin && chmod +x /usr/local/bin/happy
+```
+
+## Usage
+
 ```sh
 $ ./happy -h
 usage: happy [-h] [--bruh] {log,get} ...
