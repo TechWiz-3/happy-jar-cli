@@ -14,12 +14,12 @@ from datetime import datetime
 from os.path import expanduser
 from sys import argv
 from os.path import exists
+from random import choice
 import argparse
 import textwrap
 import re
 
 HOME = expanduser("~")
-
 
 def write_file(payload, time=None):
 
@@ -34,11 +34,18 @@ def write_file(payload, time=None):
         with open(f"{HOME}/happyjar.txt", "w") as happy_file:
             happy_file.write(f"{time}: {payload}\n")
 
-def read_file(date=False, today=False):
+def read_file(date=False, today=False, flowers=False):
+    flower = ""
+    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️ "]
+
     if not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/happyjar.txt", "r") as happy_file:
             for line in happy_file:
-                print(line)
+                if line != "\n" and flowers == True:
+                    flower = choice(flower_selection)
+                    print(f"{flower}{line}")
+                else:
+                    print(line)
     elif today:
         time = datetime.today()
         today = time.strftime("%A %-d/%b/%Y")
@@ -47,7 +54,9 @@ def read_file(date=False, today=False):
         with open(f"{HOME}/happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
-                    print(line)
+                    if flowers:
+                        flower = choice(flower_selection)
+                    print(f"{flower}{line}")
 
 if __name__ == "__main__":
 
@@ -70,6 +79,7 @@ if __name__ == "__main__":
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
     get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
 
     args = parser.parse_args(argv[1:])
 
@@ -78,10 +88,13 @@ if __name__ == "__main__":
         exit()
     if args.command == "get":
         if args.all == "today":
-            read_file(today=True)
+            print("")
+            read_file(today=True, flowers=args.flowers)
             exit()
         elif args.all == "all":
-            read_file()
+            print("")
+            read_file(flowers=args.flowers)
         else:
-            read_file()
+            print("")
+            read_file(flowers=args.flowers)
             exit()
