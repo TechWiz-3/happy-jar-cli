@@ -36,7 +36,7 @@ def write_file(payload, time=None):
 
 def read_file(date=False, today=False, flowers=False):
     flower = ""
-    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️ "]
+    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
     if not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/happyjar.txt", "r") as happy_file:
