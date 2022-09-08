@@ -39,6 +39,10 @@ happy log "i am so happy because you starred this project's repo on github xDD"
 happy get all
 ```
 
+## Example
+
+<img src="./media/example.png" width="700px"></img>  
+
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
 ---
