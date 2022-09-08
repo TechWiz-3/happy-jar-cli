@@ -25,7 +25,10 @@ def write_file(payload, time=None):
 
     if time == None:
         time = datetime.today()
-        time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
+        try:
+            time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
+        except ValueError:
+            time = time.strftime("%A %d/%b/%Y %I:%M %p")
 
     if exists(f"{HOME}/happyjar.txt"):
         with open(f"{HOME}/happyjar.txt", "a") as happy_file:
@@ -48,7 +51,10 @@ def read_file(date=False, today=False, flowers=False):
                     print(line)
     elif today:
         time = datetime.today()
-        today = time.strftime("%A %-d/%b/%Y")
+        try:
+            today = time.strftime("%A %-d/%b/%Y")
+        except ValueError:
+            today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
 
         with open(f"{HOME}/happyjar.txt", "r") as happy_file:
