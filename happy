@@ -73,7 +73,9 @@ def read_file(date=False, today=False, flowers=False):
                         match = re.match(dt_re,line)
                         if match:
                             if match.group():
-                                print(line)
+                                if flowers:
+                                    flower = choice(flower_selection)
+                                print(f"{flower}{line}")
 
 
     elif not date and not today:  # assume the whole file should be printed
@@ -128,5 +130,5 @@ if __name__ == "__main__":
                 read_file(flowers=args.flowers)
             else:
                 if dt:
-                    read_file(date=dt.group())
+                    read_file(date=dt.group(), flowers=args.flowers)
             exit()
