@@ -15,7 +15,7 @@ cp ~/happy-jar-cli/happy /usr/local/bin && chmod +x /usr/local/bin/happy
 ```
 
 ## What is it?
-<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg" width="400px"></img>  
+<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg?raw=true" width="400px"></img>  
 [Source](https://twitter.com/imovesactive/status/1274960313863950337)
 
 ## Usage
@@ -41,7 +41,7 @@ happy get all
 
 ## Example
 
-<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/example.png" width="700px"></img>  
+<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg?raw=true" width="700px"></img>  
 
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
