@@ -41,7 +41,7 @@ happy get all
 
 ## Example
 
-<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg?raw=true" width="700px"></img>  
+<img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/example.png?raw=true" width="700px"></img>  
 
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
