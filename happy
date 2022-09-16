@@ -4,10 +4,8 @@
 # License: GPL-v3.0
 
 # Todo
-# Get by date
 # Get until date
 # Get before data
-# Response when log is successfull
 
 from datetime import datetime
 from os.path import expanduser
@@ -29,16 +27,32 @@ def write_file(payload, time=None):
         except ValueError:
             time = time.strftime("%A %d/%b/%Y %I:%M %p")
 
-    if exists(f"{HOME}/happyjar.txt"):
-        with open(f"{HOME}/happyjar.txt", "a") as happy_file:
-            happy_file.write(f"{time}: {payload}\n")
+    if exists(f"{HOME}/.happyjar.txt"):
+        try:
+            with open(f"{HOME}/.happyjar.txt", "a") as happy_file:
+                happy_file.write(f"{time}: {payload}\n")
+        except Exception as err:
+            print(f"Error occurred: {err}")
+        else:
+            print("Entry written successfully!")
     else:
-        with open(f"{HOME}/happyjar.txt", "w") as happy_file:
-            happy_file.write(f"{time}: {payload}\n")
+        try:
+            with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
+                happy_file.write(f"{time}: {payload}\n")
+        except Exception as err:
+            print(f"Error occurred: {err}")
+        else:
+            print("Jar created!")
+            print("Entry written successfully!")
+            print("Use happy get all or happy get today to view your logs!")
 
 def read_file(date=False, today=False, flowers=False):
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+
+    if not exists(f"{HOME}/.happyjar.txt"):
+        print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
+        exit()
 
     if today:
         time = datetime.today()
@@ -48,7 +62,7 @@ def read_file(date=False, today=False, flowers=False):
             today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
 
-        with open(f"{HOME}/happyjar.txt", "r") as happy_file:
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
                     if flowers:
@@ -67,7 +81,7 @@ def read_file(date=False, today=False, flowers=False):
             except ValueError:
                 converted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
             dt_re =  re.compile(f"^{converted_dt}")
-            with open(f"{HOME}/happyjar.txt") as happy_file:
+            with open(f"{HOME}/.happyjar.txt") as happy_file:
                 for line in happy_file:
                     if line != "\n":
                         match = re.match(dt_re,line)
@@ -79,7 +93,7 @@ def read_file(date=False, today=False, flowers=False):
 
 
     elif not date and not today:  # assume the whole file should be printed
-        with open(f"{HOME}/happyjar.txt", "r") as happy_file:
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if line != "\n" and flowers == True:
                     flower = choice(flower_selection)
