@@ -34,3 +34,20 @@ jobs:
         with:
           name: happy_windows
           path: dist
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Test Build Python Exe
+      uses: eric2788/pyinstaller-build@master
+      with:
+        main: happy
+        artifact: happy
+        use-dependencies: false
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: happy_macos
+        path: dist
+
