@@ -11,6 +11,7 @@ from datetime import datetime
 from os.path import expanduser
 from sys import argv
 from os.path import exists
+from sys import exit
 from random import choice
 import argparse
 import textwrap
