@@ -11,7 +11,7 @@ jobs:
       uses: eric2788/pyinstaller-build@master
       with:
         main: happy
-        artifact: happy_linux
+        artifact: happy
         use-dependencies: false
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
@@ -27,10 +27,10 @@ jobs:
         uses: eric2788/pyinstaller-build@master
         with:
           main: happy
-          artifact: happy_window
+          artifact: happy
           use-dependencies: false
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: python_exe
+          name: happy_windows
           path: dist
