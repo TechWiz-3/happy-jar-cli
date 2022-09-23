@@ -23,6 +23,9 @@ jobs:
         with:
           script-name: happy.py
 
+      - name: Debug
+        shell: bash
+        run: ls && ls build/
       # Uploads artifact
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
