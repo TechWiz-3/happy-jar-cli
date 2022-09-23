@@ -4,7 +4,6 @@ on: [push]
 jobs:
 
   build:
-    # Windows is currently the only platform this action supports
     runs-on: macos-latest
     steps:
       # Check-out repository
