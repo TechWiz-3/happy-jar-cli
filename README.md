@@ -8,9 +8,12 @@ Write to it with `happy log "happy text here :)"`
 View logs with `happy get all` or `happy get today`  
 
 ## Install
+**Python:**
 ```sh
 pip install happyjar
 ```
+**Binaries:**  
+Download the binary for your platform from the `Artifacts` section of the latest [GitHub Actions](https://github.com/TechWiz-3/happy-jar-cli/actions) run.
 
 ## What is it?
 <img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg?raw=true" width="400px"></img>  
