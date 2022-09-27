@@ -46,6 +46,10 @@ happy get all
 
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
+## Todo
+- [ ] Add support for markdown emojis with the `:emoji:` format. Use Textualize/rich for this.  
+- [ ] Support `get <date> --until|--before`
+
 ---
 ### 🎉 Commit labels
 If you're interested in the commit labels used in this repo, check out my [git commit emoji](https://github.com/TechWiz-3/git-commit-emojis) project
