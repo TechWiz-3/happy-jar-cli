@@ -47,7 +47,7 @@ def write_file(payload, time=None):
             print("Entry written successfully!")
             print("Use happy get all or happy get today to view your logs!")
 
-def read_file(date=False, today=False, flowers=False):
+def read_file(date=False, today=False, flowers=False, until=False, before=False):
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
@@ -78,15 +78,28 @@ def read_file(date=False, today=False, flowers=False):
             exit()
         else:
             try:
-                converted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
+                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
             except ValueError:
-                converted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
-            dt_re =  re.compile(f"^{converted_dt}")
+                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
+            dt_re =  re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
                 for line in happy_file:
                     if line != "\n":
-                        match = re.match(dt_re,line)
-                        if match:
+                        date = line.split()[1]
+                        dt = datetime.strptime(date, "%d/%b/%Y")
+
+                        if until:
+                            if dt > converted_dt:
+                                if flowers:
+                                    flower = choice(flower_selection)
+                                print(f"{flower}{line}")
+                        elif before:
+                            if dt < converted_dt:
+                                if flowers:
+                                    flower = choice(flower_selection)
+                                print(f"{flower}{line}")
+                        else:
+                            match = re.match(dt_re,line)
                             if match.group():
                                 if flowers:
                                     flower = choice(flower_selection)
@@ -120,6 +133,8 @@ def cli() -> None:
     get.add_argument("today", help="gets today's entries", nargs="?")
     get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
     get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
+    get.add_argument("--until", help="shows entries until the give date", action='store_true')
+    get.add_argument("--before", help="shows entries before the give date", action='store_true')
 
     args = parser.parse_args(argv[1:])
 
@@ -143,7 +158,12 @@ def cli() -> None:
                 read_file(flowers=args.flowers)
             else:
                 if dt:
-                    read_file(date=dt.group(), flowers=args.flowers)
+                    read_file(
+                        date=dt.group(),
+                        flowers=args.flowers,
+                        until=args.until,
+                        before=args.before
+                    )
             exit()
 
 
