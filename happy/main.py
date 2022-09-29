@@ -102,15 +102,13 @@ def read_file(date=False, today=False, flowers=False):
                 else:
                     print(line)
 
-if __name__ == "__main__":
-
+def cli() -> None:
     description = "Log your good memories and gratitiude."
     epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\nhappy get all\n\nFor more help use happy log --help and happy get --help"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description, epilog=textwrap.dedent(epilog)
     )
-
 
     subparsers = parser.add_subparsers(dest='command')
 

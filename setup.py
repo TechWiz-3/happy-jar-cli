@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from pathlib import Path
 
 project_dir = Path(__file__).parent
@@ -12,5 +12,9 @@ setup(
     description="Keep a happy jar from your terminal",
     long_description_content_type='text/markdown',
     long_description=long_description,
-    scripts=["happy"]
+    packages=find_packages(),
+    entry_points='''
+        [console_scripts]
+        happy=happy.main:cli
+    '''
 )
