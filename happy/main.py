@@ -145,3 +145,7 @@ def cli() -> None:
                 if dt:
                     read_file(date=dt.group(), flowers=args.flowers)
             exit()
+
+
+if __name__ == "__main__":
+    cli()
