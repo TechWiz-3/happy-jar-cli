@@ -1,7 +1,15 @@
 # Contribution Guidelines
 
-When contributing to this repository, make sure to first discuss the change you wish to implement via [GitHub Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) or the [GitHub Discussions (TBA)]() page of this repository.
+First of all, thank you so much for taking a deeper look at the project. It does mean a lot.  
 
-All changes added must pass the CI tests (TBA) provided by the GitHub Actions workflows. If not, further changes must be done in order to make up for a valid pull request / merge request.
+PRs and issues of all sorts are welcome, here are some guides to help you out.  
 
-We also have a [Code of Conduct](./CODE_OF_CONDUCT.md) in place so make sure to follow the given set of guidelines and thresholds while you interact with the project!
+When contributing to this repository, preferably first discuess the changes you wish to implement via [GitHub Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) page.
+
+If you're unure you to help, check out the `Todo` section of the project's README.md.  
+
+Following the commit messages specified in [emoji-log](https://github.com/ahmadawais/Emoji-Log) is greatly appreciated (however not mandatory). You can use my [CLI tool](https://github.com/TechWiz-3/git-commit-emojis/) for commits if that's easier.  
+
+All changes added must pass the CI tests (TBA) provided by the GitHub Actions workflows. If not, further changes must be done in order to make up for a valid pull request / merge request. If you need help because a test isn't passing, please open an issue :+1:
+
+We also have a [Code of Conduct](./CODE_OF_CONDUCT.md) in place so please make sure to follow the given set of guidelines and thresholds while you interact with the project!
