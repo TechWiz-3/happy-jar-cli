@@ -87,7 +87,6 @@ def read_file(date=False, today=False, flowers=False, until=False, before=False)
                     if line != "\n":
                         date = line.split()[1]
                         dt = datetime.strptime(date, "%d/%b/%Y")
-
                         if until:
                             if dt > converted_dt:
                                 if flowers:
@@ -100,7 +99,7 @@ def read_file(date=False, today=False, flowers=False, until=False, before=False)
                                 print(f"{flower}{line}")
                         else:
                             match = re.match(dt_re,line)
-                            if match.group():
+                            if match:
                                 if flowers:
                                     flower = choice(flower_selection)
                                 print(f"{flower}{line}")
@@ -133,8 +132,6 @@ def cli() -> None:
     get.add_argument("today", help="gets today's entries", nargs="?")
     get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
     get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
-    get.add_argument("--until", help="shows entries until the give date", action='store_true')
-    get.add_argument("--before", help="shows entries before the give date", action='store_true')
 
     args = parser.parse_args(argv[1:])
 
@@ -150,10 +147,14 @@ def cli() -> None:
             print("")
             read_file(flowers=args.flowers)
         else:
+            if args.all == "until" or args.all == "before":
+                date = args.today
+            else:
+                date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
             print("")
             try:
-                dt = re.match(date_re, args.all)
+                dt = re.match(date_re, date)
             except TypeError:
                 read_file(flowers=args.flowers)
             else:
@@ -161,8 +162,8 @@ def cli() -> None:
                     read_file(
                         date=dt.group(),
                         flowers=args.flowers,
-                        until=args.until,
-                        before=args.before
+                        until=args.all=="until",
+                        before=args.all=="before"
                     )
             exit()
 
