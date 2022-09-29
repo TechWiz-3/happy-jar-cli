@@ -3,10 +3,6 @@
 # Created by Zac the Wise
 # License: GPL-v3.0
 
-# Todo
-# Get until date
-# Get before data
-
 from datetime import datetime
 from os.path import expanduser
 from sys import argv
@@ -97,13 +93,14 @@ def read_file(date=False, today=False, flowers=False, until=False, before=False)
                                 if flowers:
                                     flower = choice(flower_selection)
                                 print(f"{flower}{line}")
+                            else:
+                                break
                         else:
                             match = re.match(dt_re,line)
                             if match:
                                 if flowers:
                                     flower = choice(flower_selection)
                                 print(f"{flower}{line}")
-
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
