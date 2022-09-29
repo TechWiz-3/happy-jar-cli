@@ -13,7 +13,7 @@ jobs:
     - name: Build Linux Binary
       uses: eric2788/pyinstaller-build@master
       with:
-        main: happy
+        main: happy/main
         artifact: happy
         use-dependencies: false
     - name: Upload Artifact
@@ -29,7 +29,7 @@ jobs:
       - name: Build Windows Exe
         uses: eric2788/pyinstaller-build@master
         with:
-          main: happy
+          main: happy/main
           artifact: happy
           use-dependencies: false
       - name: Upload Artifact
@@ -53,7 +53,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
-          pyinstaller -y --name happy --onefile "happy.py"
+          pyinstaller -y --name happy --onefile "happy/main.py"
           chmod 770 "./dist"
       # Uploads artifact
       - name: Upload Artifact
