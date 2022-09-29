@@ -12,4 +12,6 @@ Following the commit messages specified in [emoji-log](https://github.com/ahmada
 
 All changes added must pass the CI tests (TBA) provided by the GitHub Actions workflows. If not, further changes must be done in order to make up for a valid pull request / merge request. If you need help because a test isn't passing, please open an issue :+1:
 
-We also have a [Code of Conduct](./CODE_OF_CONDUCT.md) in place so please make sure to follow the given set of guidelines and thresholds while you interact with the project!
+We also have a [Code of Conduct](./CODE_OF_CONDUCT.md) in place so please make sure to follow the given set of guidelines and thresholds while you interact with the project!  
+
+Contributors will receive recognition for their contributions to mankind (I mean this project) in the `Contributors` section of the `README.md`. You will also receive a nice title to describle your abilities and might open-source prowess.

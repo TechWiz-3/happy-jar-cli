@@ -48,7 +48,12 @@ Inspired by [michelle/happy](https://github.com/michelle/happy)
 
 ## Todo
 - [ ] Add support for markdown emojis with the `:emoji:` format. Use Textualize/rich for this.  
-- [ ] Support `get <date> --until|--before`
+- [ ] Support `get until|before <date>`
+Check [Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) for more.
+
+## Contributors
+
+* [HitBlast](https://github.com/hitblast) the Mighty
 
 ---
 ### 🎉 Commit labels
