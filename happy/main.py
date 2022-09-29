@@ -44,8 +44,6 @@ def write_file(payload, time=None):
             print("Use happy get all or happy get today to view your logs!")
 
 def read_file(date=False, today=False, flowers=False, until=False, before=False):
-    flower = ""
-    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
@@ -62,9 +60,7 @@ def read_file(date=False, today=False, flowers=False, until=False, before=False)
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
-                    if flowers:
-                        flower = choice(flower_selection)
-                    print(f"{flower}{line}")
+                    display_entry(flowers, line)
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -85,31 +81,30 @@ def read_file(date=False, today=False, flowers=False, until=False, before=False)
                         dt = datetime.strptime(date, "%d/%b/%Y")
                         if until:
                             if dt > converted_dt:
-                                if flowers:
-                                    flower = choice(flower_selection)
-                                print(f"{flower}{line}")
+                                display_entry(flowers, line)
                         elif before:
                             if dt < converted_dt:
-                                if flowers:
-                                    flower = choice(flower_selection)
-                                print(f"{flower}{line}")
+                                display_entry(flowers, line)
                             else:
                                 break
                         else:
                             match = re.match(dt_re,line)
                             if match:
-                                if flowers:
-                                    flower = choice(flower_selection)
-                                print(f"{flower}{line}")
+                                display_entry(flowers, line)
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
-                if line != "\n" and flowers == True:
-                    flower = choice(flower_selection)
-                    print(f"{flower}{line}")
-                else:
-                    print(line)
+                display_entry(flowers, line)
+
+def display_entry(flowers, line):
+    flower = ""
+    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+    if line != "\n" and flowers:
+        flower = choice(flower_selection)
+        print(f"{flower}{line}")
+    else:
+        print(line)
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
