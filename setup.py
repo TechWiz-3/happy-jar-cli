@@ -8,7 +8,7 @@ setup(
     name="happyjar",
     url="https://github.com/TechWiz-3/happy-jar-cli",
     author="Zac the Wise aka TechWiz-3",
-    version='2.0.0',
+    version='3.0.0',
     description="Keep a happy jar from your terminal",
     long_description_content_type='text/markdown',
     long_description=long_description,
