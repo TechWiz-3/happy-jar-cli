@@ -122,6 +122,7 @@ def cli() -> None:
     get = subparsers.add_parser("get", help="gets entries")
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
+    get.add_argument("before today", help="gets all entries before today", nargs="?")
     get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
     get.add_argument("until <date>", help="gets all entries until a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
