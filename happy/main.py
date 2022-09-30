@@ -143,6 +143,8 @@ def cli() -> None:
         else:
             if args.all == "until" or args.all == "before":
                 date = args.today
+                if args.today == "today":
+                    date = datetime.now().strftime("%d/%m/%Y")
             else:
                 date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
