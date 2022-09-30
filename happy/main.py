@@ -77,6 +77,7 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False)
             with open(f"{HOME}/.happyjar.txt") as happy_file:
                 for line in happy_file:
                     if line != "\n":
+                        # get the date of the line
                         date = line.split()[1]
                         dt = datetime.strptime(date, "%d/%b/%Y")
                         if after:
@@ -142,8 +143,10 @@ def cli() -> None:
             print("")
             read_file(flowers=args.flowers)
         else:
+            # checks for after or until command
             if args.all == "after" or args.all == "before":
                 date = args.today
+                # uses current date if input is today
                 if args.today == "today":
                     date = datetime.now().strftime("%d/%m/%Y")
             else:
