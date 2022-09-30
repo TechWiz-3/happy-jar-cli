@@ -122,7 +122,9 @@ def cli() -> None:
     get = subparsers.add_parser("get", help="gets entries")
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
-    get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument("until <date>", help="gets all entries until a date", nargs="?")
+    get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
     get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
 
     args = parser.parse_args(argv[1:])
