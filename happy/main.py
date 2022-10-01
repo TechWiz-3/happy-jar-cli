@@ -45,10 +45,10 @@ def write_file(payload, time=None):
 
 
 def read_file(
-        date=False, today=False,
-        flowers=False, after=False,
-        before=False, random=0
-    ):
+    date=False, today=False,
+    flowers=False, after=False,
+    before=False, random=0
+):
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
         exit()
@@ -74,10 +74,10 @@ def read_file(
             exit()
         else:
             try:
-            # format dt object
+                # format dt object
                 formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")
             except ValueError:
-            # format dt object
+                # format dt object
                 formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")
 
             dt_re = re.compile(f"^{formatted_dt}")
