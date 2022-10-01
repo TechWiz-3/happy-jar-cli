@@ -4,123 +4,13 @@
 # License: GPL-v3.0
 
 from datetime import datetime
-from os.path import expanduser
 from sys import argv
-from os.path import exists
 from sys import exit
-from random import choice, sample
 import argparse
 import textwrap
 import re
 
-HOME = expanduser("~")
-
-
-def write_file(payload, time=None):
-    if time is None:
-        time = datetime.today()
-        try:
-            time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
-        except ValueError:
-            time = time.strftime("%A %d/%b/%Y %I:%M %p")
-
-    if exists(f"{HOME}/.happyjar.txt"):
-        try:
-            with open(f"{HOME}/.happyjar.txt", "a") as happy_file:
-                happy_file.write(f"{time}: {payload}\n")
-        except Exception as err:
-            print(f"Error occurred: {err}")
-        else:
-            print("Entry written successfully!")
-    else:
-        try:
-            with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
-                happy_file.write(f"{time}: {payload}\n")
-        except Exception as err:
-            print(f"Error occurred: {err}")
-        else:
-            print("Jar created!")
-            print("Entry written successfully!")
-            print("Use happy get all or happy get today to view your logs!")
-
-
-def read_file(
-    date=False, today=False,
-    flowers=False, after=False,
-    before=False, random=0
-):
-    if not exists(f"{HOME}/.happyjar.txt"):
-        print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
-        exit()
-
-    if today:
-        time = datetime.today()
-        try:
-            today = time.strftime("%A %-d/%b/%Y")
-        except ValueError:
-            today = time.strftime("%A %d/%b/%Y")
-        dt_re = re.compile(f"^{today}")
-
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
-            for line in happy_file:
-                if dt_re.match(line):
-                    display_entry(flowers, line)
-
-    elif date:
-        try:  # convert user inputted string to dt object
-            converted_dt = datetime.strptime(date, "%d/%m/%Y")
-        except ValueError:
-            print("Error: please enter the date as the format dd/mm/yyyy")
-            exit()
-        else:
-            try:
-                # format dt object
-                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")
-            except ValueError:
-                # format dt object
-                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")
-
-            dt_re = re.compile(f"^{formatted_dt}")
-            with open(f"{HOME}/.happyjar.txt") as happy_file:
-                for line in happy_file:
-                    if line != "\n":
-                        # get the date of the line
-                        date = line.split()[1]
-                        dt = datetime.strptime(date, "%d/%b/%Y")
-                        if after:
-                            if dt > converted_dt:
-                                display_entry(flowers, line)
-                        elif before:
-                            if dt < converted_dt:
-                                display_entry(flowers, line)
-                            else:
-                                break
-                        else:
-                            match = re.match(dt_re, line)
-                            if match:
-                                display_entry(flowers, line)
-
-    elif random:  # get a random entry
-        with open(f"{HOME}/.happyjar.txt") as happy_file:
-            lines = happy_file.readlines()
-            for line in sample(lines, min(random, len(lines))):
-                display_entry(flowers, line)
-
-    elif not date and not today:  # assume the whole file should be printed
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
-            for line in happy_file:
-                display_entry(flowers, line)
-
-
-def display_entry(flowers, line):
-    """displays entries with or without flowers"""
-    flower = ""
-    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
-    if line != "\n" and flowers:
-        flower = choice(flower_selection)
-        print(f"{flower}{line}")
-    else:
-        print(line)
+from happy.functions import read_file, write_file
 
 
 def cli() -> None:
@@ -190,7 +80,7 @@ def cli() -> None:
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                print("Please use an arguement after `get`\n")
+                print("Please use an argument after `get`\n")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
@@ -201,7 +91,3 @@ def cli() -> None:
                         before=args.all == "before"
                     )
             exit()
-
-
-if __name__ == "__main__":
-    cli()
