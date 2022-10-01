@@ -1,14 +1,18 @@
 # Happy Jar CLI
-
 An easy to use CLI for storing good memories and gratitiude.  
 
-The happy jar is stored as a txt file in your home dir.  
+```bash
+# basic logging
+$ happy log "Happy text here! :D"
 
-Write to it with `happy log "happy text here :)"`  
-View logs with `happy get all` or `happy get today`  
+# view logs with
+$ happy get all
 
-## Install
-**Python:**
+# or,
+$ happy get today
+```
+
+## Installation
 ```sh
 pip install happyjar
 ```
