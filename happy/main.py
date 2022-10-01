@@ -3,10 +3,6 @@
 # Created by Zac the Wise
 # License: GPL-v3.0
 
-# Todo
-# Get until date
-# Get before data
-
 from datetime import datetime
 from os.path import expanduser
 from sys import argv
@@ -47,9 +43,7 @@ def write_file(payload, time=None):
             print("Entry written successfully!")
             print("Use happy get all or happy get today to view your logs!")
 
-def read_file(date=False, today=False, flowers=False):
-    flower = ""
-    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+def read_file(date=False, today=False, flowers=False, after=False, before=False):
 
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
@@ -66,9 +60,7 @@ def read_file(date=False, today=False, flowers=False):
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
-                    if flowers:
-                        flower = choice(flower_selection)
-                    print(f"{flower}{line}")
+                    display_entry(flowers, line)
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -78,29 +70,42 @@ def read_file(date=False, today=False, flowers=False):
             exit()
         else:
             try:
-                converted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
+                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
             except ValueError:
-                converted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
-            dt_re =  re.compile(f"^{converted_dt}")
+                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
+            dt_re =  re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
                 for line in happy_file:
                     if line != "\n":
-                        match = re.match(dt_re,line)
-                        if match:
-                            if match.group():
-                                if flowers:
-                                    flower = choice(flower_selection)
-                                print(f"{flower}{line}")
-
+                        # get the date of the line
+                        date = line.split()[1]
+                        dt = datetime.strptime(date, "%d/%b/%Y")
+                        if after:
+                            if dt > converted_dt:
+                                display_entry(flowers, line)
+                        elif before:
+                            if dt < converted_dt:
+                                display_entry(flowers, line)
+                            else:
+                                break
+                        else:
+                            match = re.match(dt_re,line)
+                            if match:
+                                display_entry(flowers, line)
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
-                if line != "\n" and flowers == True:
-                    flower = choice(flower_selection)
-                    print(f"{flower}{line}")
-                else:
-                    print(line)
+                display_entry(flowers, line)
+
+def display_entry(flowers, line):
+    flower = ""
+    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+    if line != "\n" and flowers:
+        flower = choice(flower_selection)
+        print(f"{flower}{line}")
+    else:
+        print(line)
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
@@ -118,7 +123,10 @@ def cli() -> None:
     get = subparsers.add_parser("get", help="gets entries")
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
-    get.add_argument("date", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument("before today", help="gets all entries before today", nargs="?")
+    get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
+    get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
     get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
 
     args = parser.parse_args(argv[1:])
@@ -135,15 +143,28 @@ def cli() -> None:
             print("")
             read_file(flowers=args.flowers)
         else:
+            # checks for after or until command
+            if args.all == "after" or args.all == "before":
+                date = args.today
+                # uses current date if input is today
+                if args.today == "today":
+                    date = datetime.now().strftime("%d/%m/%Y")
+            else:
+                date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
             print("")
             try:
-                dt = re.match(date_re, args.all)
+                dt = re.match(date_re, date)
             except TypeError:
                 read_file(flowers=args.flowers)
             else:
                 if dt:
-                    read_file(date=dt.group(), flowers=args.flowers)
+                    read_file(
+                        date=dt.group(),
+                        flowers=args.flowers,
+                        after=args.all=="after",
+                        before=args.all=="before"
+                    )
             exit()
 
 
