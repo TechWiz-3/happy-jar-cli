@@ -53,6 +53,8 @@ def read_file(
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
         exit()
 
+    lastDate = ""
+
     if today:
         time = datetime.today()
         try:
@@ -64,7 +66,7 @@ def read_file(
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
-                    display_entry(flowers, line)
+                   lastDate = display_entry(flowers, line, lastDate)
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -89,38 +91,50 @@ def read_file(
                         dt = datetime.strptime(date, "%d/%b/%Y")
                         if after:
                             if dt > converted_dt:
-                                display_entry(flowers, line)
+                                lastDate = display_entry(flowers, line, lastDate)
                         elif before:
                             if dt < converted_dt:
-                                display_entry(flowers, line)
+                                lastDate = display_entry(flowers, line, lastDate)
                             else:
                                 break
                         else:
                             match = re.match(dt_re, line)
                             if match:
-                                display_entry(flowers, line)
+                                lastDate = display_entry(flowers, line, lastDate)
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
             lines = happy_file.readlines()
             for line in sample(lines, min(random, len(lines))):
-                display_entry(flowers, line)
+                lastDate = display_entry(flowers, line, lastDate)
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
-                display_entry(flowers, line)
+                lastDate = display_entry(flowers, line, lastDate)
 
-
-def display_entry(flowers, line):
+def display_entry(flowers, line, lastDate):
     """displays entries with or without flowers"""
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+
+    re_line = re.split("\s", line, maxsplit = 2)
+    currentDay = re_line[0]
+    currentDate = re_line[1]
+    line = re_line[2]
+
+    if(lastDate != currentDate):
+        lastDate = currentDate
+        print(f"{currentDay} {currentDate}")
+        print(".........................\n")
+
     if line != "\n" and flowers:
         flower = choice(flower_selection)
         print(f"{flower}{line}")
     else:
         print(line)
+
+    return lastDate
 
 
 def cli() -> None:
