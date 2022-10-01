@@ -15,9 +15,9 @@ import re
 
 HOME = expanduser("~")
 
-def write_file(payload, time=None):
 
-    if time == None:
+def write_file(payload, time=None):
+    if time is None:
         time = datetime.today()
         try:
             time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
@@ -43,8 +43,8 @@ def write_file(payload, time=None):
             print("Entry written successfully!")
             print("Use happy get all or happy get today to view your logs!")
 
-def read_file(date=False, today=False, flowers=False, after=False, before=False):
 
+def read_file(date=False, today=False, flowers=False, after=False, before=False):
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
         exit()
@@ -73,7 +73,8 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False)
                 formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
             except ValueError:
                 formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
-            dt_re =  re.compile(f"^{formatted_dt}")
+
+            dt_re = re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
                 for line in happy_file:
                     if line != "\n":
@@ -89,7 +90,7 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False)
                             else:
                                 break
                         else:
-                            match = re.match(dt_re,line)
+                            match = re.match(dt_re, line)
                             if match:
                                 display_entry(flowers, line)
 
@@ -97,6 +98,7 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False)
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 display_entry(flowers, line)
+
 
 def display_entry(flowers, line):
     flower = ""
@@ -106,6 +108,7 @@ def display_entry(flowers, line):
         print(f"{flower}{line}")
     else:
         print(line)
+
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
@@ -162,8 +165,8 @@ def cli() -> None:
                     read_file(
                         date=dt.group(),
                         flowers=args.flowers,
-                        after=args.all=="after",
-                        before=args.all=="before"
+                        after=args.all == "after",
+                        before=args.all == "before"
                     )
             exit()
 
