@@ -4,7 +4,7 @@ from sys import exit
 from random import choice, sample
 import re
 
-from happy.constants import HOME, flower_list
+from happy.constants import HOME, FLOWERS
 
 
 def write_file(payload, time=None):
@@ -109,7 +109,7 @@ def read_file(
 def display_entry(flowers, line):
     """Display a happy jar entry with or without flowers"""
     if line != "\n" and flowers:
-        flower = choice(flower_list)
+        flower = choice(FLOWERS)
         print(f"{flower}{line}")
     else:
         print(line)
