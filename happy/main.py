@@ -95,7 +95,8 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False,
 
     elif random:
         with open(f"{HOME}/.happyjar.txt") as happy_file:
-            for line in sample(happy_file.readlines(), random):
+            lines = happy_file.readlines()
+            for line in sample(lines, min(random, len(lines))):
                 display_entry(flowers, line)
 
     elif not date and not today:  # assume the whole file should be printed
