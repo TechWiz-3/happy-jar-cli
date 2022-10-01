@@ -1,9 +1,11 @@
 name: Build Python Binaries
 
-on: 
-  workflow_dispatch:
+on:
+  workflow_dispatch:  # manual
   release:
-    types: [published]
+    types: [published]  # published releases only
+  schedule:
+    - cron: '0 0 1 * *'  # once a month
 
 jobs:
   build_linux:
