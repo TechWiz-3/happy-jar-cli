@@ -43,7 +43,7 @@ def write_file(payload, time=None):
             print("Entry written successfully!")
             print("Use happy get all or happy get today to view your logs!")
 
-def read_file(date=False, today=False, flowers=False, after=False, before=False):
+def read_file(date=False, today=False, flowers=False, after=False, before=False, random=False):
 
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
@@ -93,6 +93,10 @@ def read_file(date=False, today=False, flowers=False, after=False, before=False)
                             if match:
                                 display_entry(flowers, line)
 
+    elif random:
+        with open(f"{HOME}/.happyjar.txt") as happy_file:
+            display_entry(flowers, choice(happy_file.readlines()))
+
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
@@ -124,6 +128,7 @@ def cli() -> None:
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
     get.add_argument("before today", help="gets all entries before today", nargs="?")
+    get.add_argument("random", help="gets a random entry", nargs="?")
     get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
@@ -142,6 +147,9 @@ def cli() -> None:
         elif args.all == "all":
             print("")
             read_file(flowers=args.flowers)
+        elif args.all == "random":
+            print("")
+            read_file(random=True, flowers=args.flowers)
         else:
             # checks for after or until command
             if args.all == "after" or args.all == "before":
