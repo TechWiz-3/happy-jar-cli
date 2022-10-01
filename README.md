@@ -1,23 +1,33 @@
 # Happy Jar CLI
-
 An easy to use CLI for storing good memories and gratitiude.  
 
-The happy jar is stored as a txt file in your home dir.  
+```bash
+# basic logging
+$ happy log "Happy text here! :D"
 
-Write to it with `happy log "happy text here :)"`  
-View logs with `happy get all` or `happy get today`  
+# view logs with
+$ happy get all
 
-## Install
-**Python:**
+# or,
+$ happy get today
+```
+
+<br>
+
+## Installation
 ```sh
 pip install happyjar
 ```
 **Binaries:**  
 Download the binary for your platform from the `Artifacts` section of the latest [GitHub Actions](https://github.com/TechWiz-3/happy-jar-cli/actions) run.
 
+<br>
+
 ## What is it?
 <img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/happy.jpg?raw=true" width="400px"></img>  
 [Source](https://twitter.com/imovesactive/status/1274960313863950337)
+
+<br>
 
 ## Usage
 
@@ -40,17 +50,23 @@ happy log "i am so happy because you starred this project's repo on github xDD"
 happy get all
 ```
 
+<br>
+
 ## Example
 
 <img src="https://github.com/TechWiz-3/happy-jar-cli/blob/main/media/example.png?raw=true" width="700px"></img>  
 
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
+<br>
+
 ## Todo
 - [ ] Add support for markdown emojis with the `:emoji:` format. Use Textualize/rich for this.  
 - [ ] Support `get until|before <date>`  
 
 Check [Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) for more.
+
+<br>
 
 ## Contributors
 
