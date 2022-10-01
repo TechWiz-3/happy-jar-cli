@@ -44,7 +44,11 @@ def write_file(payload, time=None):
             print("Use happy get all or happy get today to view your logs!")
 
 
-def read_file(date=False, today=False, flowers=False, after=False, before=False):
+def read_file(
+        date=False, today=False,
+        flowers=False, after=False,
+        before=False, random=0
+    ):
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
         exit()
