@@ -91,3 +91,7 @@ def cli() -> None:
                         before=args.all == "before"
                     )
             exit()
+
+
+if __name__ == "__main__":
+    cli()
