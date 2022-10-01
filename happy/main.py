@@ -45,9 +45,9 @@ def write_file(payload, time=None):
 
 
 def read_file(
-        date=False, today=False,
-        flowers=False, after=False,
-        before=False, random=0
+    date=False, today=False,
+    flowers=False, after=False,
+    before=False, random=0
 ):
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
@@ -74,9 +74,11 @@ def read_file(
             exit()
         else:
             try:
-                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")  # format dt object
+                # format dt object
+                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")
             except ValueError:
-                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")  # format dt object
+                # format dt object
+                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")
 
             dt_re = re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
@@ -98,7 +100,7 @@ def read_file(
                             if match:
                                 display_entry(flowers, line)
 
-    elif random:
+    elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
             lines = happy_file.readlines()
             for line in sample(lines, min(random, len(lines))):
@@ -111,6 +113,7 @@ def read_file(
 
 
 def display_entry(flowers, line):
+    """displays entries with or without flowers"""
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     if line != "\n" and flowers:
@@ -150,19 +153,27 @@ def cli() -> None:
         write_file(args.log_entry)
         exit()
     if args.command == "get":
+
+        # `happy get today`
         if args.all == "today":
             print("")
             read_file(today=True, flowers=args.flowers)
             exit()
+
+        # `happy get all`
         elif args.all == "all":
             print("")
             read_file(flowers=args.flowers)
+
+        # `happy get random [<num>]`
         elif args.all == "random":
             print("")
             if args.today:
                 read_file(random=int(args.today), flowers=args.flowers)
             else:
                 read_file(random=1, flowers=args.flowers)
+
+        # `happy get [after|before|<date>]
         else:
             # checks for after or until command
             if args.all == "after" or args.all == "before":
@@ -174,10 +185,13 @@ def cli() -> None:
                 date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
             print("")
-            try:
+            try:  # get the date provided
                 dt = re.match(date_re, date)
             except TypeError:
-                read_file(flowers=args.flowers)
+                # this triggers the command
+                # `happy get` without any other args
+                print("Please use an arguement after `get`\n")
+                get.print_help()  # print usage for `get`
             else:
                 if dt:
                     read_file(
