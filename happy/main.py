@@ -8,7 +8,7 @@
 # Get before data
 
 from datetime import datetime
-from os.path import expanduser
+from os.path import expanduser,getsize
 from sys import argv
 from os.path import exists
 from sys import exit
@@ -62,13 +62,16 @@ def read_file(date=False, today=False, flowers=False):
         except ValueError:
             today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
-
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
-            for line in happy_file:
-                if dt_re.match(line):
-                    if flowers:
-                        flower = choice(flower_selection)
-                    print(f"{flower}{line}")
+        file_size = getsize(f"{HOME}/.happyjar.txt")
+        if(not file_size):
+            print("No entries for selected time period!")
+        else:
+            with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+                for line in happy_file:
+                    if dt_re.match(line):
+                        if flowers:
+                            flower = choice(flower_selection)
+                        print(f"{flower}{line}")
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -91,6 +94,8 @@ def read_file(date=False, today=False, flowers=False):
                                 if flowers:
                                     flower = choice(flower_selection)
                                 print(f"{flower}{line}")
+                        else:
+                            print("No entries for selected time period!")
 
 
     elif not date and not today:  # assume the whole file should be printed
@@ -134,6 +139,7 @@ def cli() -> None:
         elif args.all == "all":
             print("")
             read_file(flowers=args.flowers)
+            
         else:
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
             print("")
