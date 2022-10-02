@@ -190,7 +190,7 @@ def cli() -> None:
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                print("Please use an arguement after `get`\n")
+                print("Please use an argument after `get`\n")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
