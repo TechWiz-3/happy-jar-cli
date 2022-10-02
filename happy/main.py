@@ -47,7 +47,8 @@ def write_file(payload, time=None):
 def read_file(
     date=False, today=False,
     flowers=False, after=False,
-    before=False, random=0
+    before=False, random=0,
+    count=False
 ):
     if not exists(f"{HOME}/.happyjar.txt"):
         print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
@@ -106,6 +107,21 @@ def read_file(
             for line in sample(lines, min(random, len(lines))):
                 display_entry(flowers, line)
 
+    elif count:  # get count of all entries per day
+        map = {} # map to store the count of entries
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                key = line.split()
+                if key[1] not in map.keys():
+                    map[key[1]]=1
+                else:
+                    map[key[1]]+=1
+        for item in map:
+            count = "" if map[item]==1 else "s"
+            str = f"You were happy {map[item]} time{count} on {item}"
+            display_entry(flowers,str)
+            print("")
+
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
@@ -142,6 +158,7 @@ def cli() -> None:
     get.add_argument("before today", help="gets all entries before today", nargs="?")
     get.add_argument("random", help="gets a random entry", nargs="?")
     get.add_argument("random <number>", help="gets specified number of random entries", nargs="?")
+    get.add_argument("count", help="gets count of all entries on day basis", nargs="?")
     get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
@@ -173,6 +190,11 @@ def cli() -> None:
             else:
                 read_file(random=1, flowers=args.flowers)
 
+        # `happy get count`
+        elif args.all == "count":
+            print("")
+            read_file(count=True, flowers=args.flowers)
+
         # `happy get [after|before|<date>]
         else:
             # checks for after or until command
@@ -190,7 +212,7 @@ def cli() -> None:
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                print("Please use an arguement after `get`\n")
+                print("Please use an argument after `get`\n")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
