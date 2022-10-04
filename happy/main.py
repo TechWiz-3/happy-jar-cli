@@ -61,10 +61,15 @@ def read_file(
             today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
 
+        isTodayEmpty = True  # will return True initally
+
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
+                    isTodayEmpty = False  # if content found set it to false
                     display_entry(flowers, line)
+        if isTodayEmpty:  # if content is not found it will be its default value
+            print("No entries for selected time period!\n")
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -82,6 +87,9 @@ def read_file(
 
             dt_re = re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
+                isBefore = {True: 0, False: 0} if before else {True: True}
+                isAfter = {True: 0, False: 0} if after else {True: True}
+                onDate = {True: 0, False: 0} if date and not before and date and not after else {True: True}
                 for line in happy_file:
                     if line != "\n":
                         # get the date of the line
@@ -90,15 +98,26 @@ def read_file(
                         if after:
                             if dt > converted_dt:
                                 display_entry(flowers, line)
+                                isAfter[True] += 1
                         elif before:
                             if dt < converted_dt:
                                 display_entry(flowers, line)
-                            else:
-                                break
+                                isBefore[True] += 1
                         else:
                             match = re.match(dt_re, line)
                             if match:
                                 display_entry(flowers, line)
+                                onDate[True] += 1
+
+                if not isBefore[True]:
+                    print('No entries for selected time period!\n')
+                    print(isBefore[True])
+                elif not isAfter[True]:
+                    print('No entries for selected time period!\n')
+                    print(isAfter[True])
+                elif not onDate[True]:
+                    print('No entries for selected time period!\n')
+                    print(onDate[True])
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
@@ -188,12 +207,14 @@ def cli() -> None:
                 # uses current date if input is today
                 if args.today == "today":
                     date = datetime.now().strftime("%d/%m/%Y")
+                    print(date)
             else:
                 date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
             print("")
             try:  # get the date provided
                 dt = re.match(date_re, date)
+
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
