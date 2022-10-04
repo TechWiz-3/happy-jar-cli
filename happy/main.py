@@ -111,13 +111,11 @@ def read_file(
 
                 if not isBefore[True]:  # if there is no entry with any feed back then exicute
                     print('No entries for selected time period!\n')
-                    print(isBefore[True])
                 elif not isAfter[True]:
-                    print('No entries for selected time period!\n')
-                    print(isAfter[True])
+                    print('No entries for selected time period!\n')  
                 elif not onDate[True]:
                     print('No entries for selected time period!\n')
-                    print(onDate[True])
+                   
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
