@@ -39,18 +39,18 @@ def write_file(payload, time=None):
         except Exception as err:
             print(f"Error occurred: {err}")
         else:
-            print("Jar created!")
-            print("Entry written successfully!")
-            print("Use happy get all or happy get today to view your logs!")
+            print(
+                "\nJar created!\nEntry written successfully!\nUse 'happy get all' or 'happy get today' to view your logs!"
+            )
 
 
 def read_file(
-    date=False, today=False,
-    flowers=False, after=False,
-    before=False, random=0
+    date=False, today=False, flowers=False, after=False, before=False, random=0
 ):
     if not exists(f"{HOME}/.happyjar.txt"):
-        print("Error: your happyjar has not been initialised yet. To do that, log an entry using happy log \"my first log\".\nFor more info use happy log -h\n")
+        print(
+            "Error: your happyjar has not been initialised yet. To do that, log an entry using 'happy log \"my first log\"'.\nFor more info use 'happy log -h'\n"
+        )
         exit()
 
     if today:
@@ -125,13 +125,14 @@ def display_entry(flowers, line):
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
-    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\nhappy get all\n\nFor more help use happy log --help and happy get --help"
+    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\n'happy get all'\n\nFor more help use 'happy log --help' and 'happy get --help'"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description, epilog=textwrap.dedent(epilog)
+        description=description,
+        epilog=textwrap.dedent(epilog),
     )
 
-    subparsers = parser.add_subparsers(dest='command')
+    subparsers = parser.add_subparsers(dest="command")
 
     log = subparsers.add_parser("log", help="logs an entry")
     log.add_argument("log_entry", help="log message in quotes")
@@ -141,11 +142,17 @@ def cli() -> None:
     get.add_argument("today", help="gets today's entries", nargs="?")
     get.add_argument("before today", help="gets all entries before today", nargs="?")
     get.add_argument("random", help="gets a random entry", nargs="?")
-    get.add_argument("random <number>", help="gets specified number of random entries", nargs="?")
-    get.add_argument("<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?")
+    get.add_argument(
+        "random <number>", help="gets specified number of random entries", nargs="?"
+    )
+    get.add_argument(
+        "<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?"
+    )
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
-    get.add_argument("--flowers", help="adds a random flower to your entry 🌼", action='store_true')
+    get.add_argument(
+        "--flowers", help="adds a random flower to your entry 🌼", action="store_true"
+    )
 
     args = parser.parse_args(argv[1:])
 
@@ -198,7 +205,7 @@ def cli() -> None:
                         date=dt.group(),
                         flowers=args.flowers,
                         after=args.all == "after",
-                        before=args.all == "before"
+                        before=args.all == "before",
                     )
             exit()
 
