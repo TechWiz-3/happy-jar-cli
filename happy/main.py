@@ -13,10 +13,18 @@ import argparse
 import textwrap
 import re
 from rich.console import Console
+from rich.markdown import Markdown
+from rich.theme import Theme
+
+custom_theme = Theme({"info": "bold cyan",
+"error": "bold red",
+"date": "bold blue",
+"entry": "bold italic yellow",
+"warning": "italic dim yellow"})
 
 HOME = expanduser("~")
 
-console = Console(highlight=False)
+console = Console(highlight=False, theme=custom_theme)
 
 
 def write_file(payload, time=None):
@@ -32,19 +40,20 @@ def write_file(payload, time=None):
             with open(f"{HOME}/.happyjar.txt", "a") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
-            console.print(f"Error occurred: {err}")
+            console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print("Entry written successfully!")
+            console.print("Entry written successfully!", style="info")
     else:
         try:
             with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
-            console.print(f"Error occurred: {err}")
+            console.print(f"Error occurred: {err}", style="error")
         else:
             console.print(
-                "\nJar created!\nEntry written successfully!\nUse 'happy get all' or 'happy get today' to view your logs!"
-            )
+                Markdown("""Jar created!  
+Entry written successfully!  
+Use `happy get all` or `happy get today` to view your logs!"""), style="info")
 
 
 def read_file(
@@ -53,7 +62,9 @@ def read_file(
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
         console.print(
-            "Error: your happyjar has not been initialised yet. To do that, log an entry using 'happy log \"my first log\"'.\nFor more info use 'happy log -h'\n"
+            Markdown("""Error: your happyjar has not been initialised yet.  
+To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`.  
+For more info use `happy log -h`\n"""), style="error"
         )
         exit()
 
@@ -75,7 +86,7 @@ def read_file(
         try:  # convert user inputted string to dt object
             converted_dt = datetime.strptime(date, "%d/%m/%Y")
         except ValueError:
-            console.print("Error occurred converting date to date object")
+            console.print("Error occurred converting date to date object", style="error")
             exit()
         else:
             try:
@@ -121,11 +132,11 @@ def read_file(
                 display = True
                 display_entry(flowers, line)
     if not display:
-        print("No entries for selected time period")
+        console.print("No entries for selected time period", style="info")
 
 
 def display_entry(flowers, line):
-    """displays entries with or without flowers"""
+    """displays entries with or without flowers or colors"""
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     if line != "\n" and flowers:
@@ -137,7 +148,7 @@ def display_entry(flowers, line):
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
-    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\n'happy get all'\n\nFor more help use 'happy log --help' and 'happy get --help'"
+    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\n`happy get all`\n\nFor more help use `happy log --help` and `happy get --help`"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description,
@@ -165,6 +176,7 @@ def cli() -> None:
     get.add_argument(
         "--flowers", help="adds a random flower to your entry 🌼", action="store_true"
     )
+    #get.add_argument("--nocolor", help="displays entries without any color formatting", action="store_true")
 
     args = parser.parse_args(argv[1:])
 
@@ -209,7 +221,7 @@ def cli() -> None:
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                console.print("Please use an argument after `get`\n")
+                console.print(Markdown("Please use an argument after `get`"), style="warning")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
@@ -220,7 +232,7 @@ def cli() -> None:
                         before=args.all == "before",
                     )
                 else:
-                    print("Error: please enter the date as the format dd/mm/yyyy")
+                    console.print(Markdown("Error: please enter the date as the format `dd/mm/yyyy`"), style="error")
 
             exit()
 
