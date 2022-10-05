@@ -12,8 +12,11 @@ from random import choice, sample
 import argparse
 import textwrap
 import re
+from rich.console import Console
 
 HOME = expanduser("~")
+
+console = Console(highlight=False)
 
 
 def write_file(payload, time=None):
@@ -29,17 +32,17 @@ def write_file(payload, time=None):
             with open(f"{HOME}/.happyjar.txt", "a") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
-            print(f"Error occurred: {err}")
+            console.print(f"Error occurred: {err}")
         else:
-            print("Entry written successfully!")
+            console.print("Entry written successfully!")
     else:
         try:
             with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
-            print(f"Error occurred: {err}")
+            console.print(f"Error occurred: {err}")
         else:
-            print(
+            console.print(
                 "\nJar created!\nEntry written successfully!\nUse 'happy get all' or 'happy get today' to view your logs!"
             )
 
@@ -49,7 +52,7 @@ def read_file(
 ):
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
-        print(
+        console.print(
             "Error: your happyjar has not been initialised yet. To do that, log an entry using 'happy log \"my first log\"'.\nFor more info use 'happy log -h'\n"
         )
         exit()
@@ -72,8 +75,8 @@ def read_file(
         try:  # convert user inputted string to dt object
             converted_dt = datetime.strptime(date, "%d/%m/%Y")
         except ValueError:
-            print("")
-            print("Error occurred converting date to date object")
+            console.print("Error occurred converting date to date object")
+            exit()
         else:
             try:
                 # format dt object
@@ -127,9 +130,9 @@ def display_entry(flowers, line):
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     if line != "\n" and flowers:
         flower = choice(flower_selection)
-        print(f"{flower}{line}")
+        console.print(f"{flower}{line}")
     else:
-        print(line)
+        console.print(line)
 
 
 def cli() -> None:
@@ -172,18 +175,18 @@ def cli() -> None:
 
         # `happy get today`
         if args.all == "today":
-            print("")
+            console.print("")
             read_file(today=True, flowers=args.flowers)
             exit()
 
         # `happy get all`
         elif args.all == "all":
-            print("")
+            console.print("")
             read_file(flowers=args.flowers)
 
         # `happy get random [<num>]`
         elif args.all == "random":
-            print("")
+            console.print("")
             if args.today:
                 read_file(random=int(args.today), flowers=args.flowers)
             else:
@@ -200,13 +203,13 @@ def cli() -> None:
             else:
                 date = args.all
             date_re = re.compile("^[0-9]{1,2}\/[0-9]{2}\/[0-9]{4}")
-            print("")
+            console.print("")
             try:  # get the date provided
                 dt = re.match(date_re, date)
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                print("Please use an argument after `get`\n")
+                console.print("Please use an argument after `get`\n")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
