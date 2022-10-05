@@ -16,11 +16,15 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
 
-custom_theme = Theme({"info": "bold color(39)",
-"error": "bold red",
-"date": "color(111)",
-"entry": "bold italic default",
-"warning": "italic dim yellow"})
+custom_theme = Theme(
+    {
+        "info": "bold color(39)",
+        "error": "bold red",
+        "date": "color(111)",
+        "entry": "bold default",
+        "warning": "italic dim yellow",
+    }
+)
 
 HOME = expanduser("~")
 
@@ -50,22 +54,39 @@ def write_file(payload, time=None):
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print("",
-                Markdown("""Jar created!  
+            console.print(
+                "",
+                Markdown(
+                    """Jar created!  
 Entry written successfully!  
 Use `happy get all` or `happy get today` to view your logs!  
-"""), "", style="info")
+"""
+                ),
+                "",
+                style="info",
+            )
 
 
 def read_file(
-    date=False, today=False, flowers=False, after=False, before=False, random=0, nocolor=False
+    date=False,
+    today=False,
+    flowers=False,
+    after=False,
+    before=False,
+    random=0,
+    nocolor=False,
 ):
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
         console.print(
-            Markdown("""Error: your happyjar has not been initialised yet.  
+            Markdown(
+                """Error: your happyjar has not been initialised yet.  
 To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`.  
-For more info use `happy log -h`"""), "", style="error")
+For more info use `happy log -h`"""
+            ),
+            "",
+            style="error",
+        )
         exit()
 
     if today:
@@ -86,7 +107,9 @@ For more info use `happy log -h`"""), "", style="error")
         try:  # convert user inputted string to dt object
             converted_dt = datetime.strptime(date, "%d/%m/%Y")
         except ValueError:
-            console.print("Error occurred converting date to date object", style="error")
+            console.print(
+                "Error occurred converting date to date object", style="error"
+            )
             exit()
         else:
             try:
@@ -141,24 +164,28 @@ def display_entry(flowers, line, nocolor):
     date = line[0]
     entry = line[1]
 
-    toggle_style = ["date","entry"]
+    toggle_style = ["date", "entry"]
     if nocolor:
-        toggle_style = ["default","default"]
-           
+        toggle_style = ["default", "default"]
+
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
-    
+
     if line != "\n" and flowers:
         flower = choice(flower_selection)
-        
-        console.print(f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]")
+
+        console.print(
+            f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+        )
     else:
-        console.print(f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]")
+        console.print(
+            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+        )
 
 
 def cli() -> None:
     description = "Log your good memories and gratitiude."
-    epilog = "examples:\nhappy log \"i am so happy because you starred this project's repo on github xDD\"\n`happy get all`\n\nFor more help use `happy log --help` and `happy get --help`"
+    epilog = 'examples:\nhappy log "i am so happy because you starred this project\'s repo on github xDD"\n`happy get all`\n\nFor more help use `happy log --help` and `happy get --help`'
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description,
@@ -186,7 +213,11 @@ def cli() -> None:
     get.add_argument(
         "--flowers", help="adds a random flower to your entry 🌼", action="store_true"
     )
-    get.add_argument("--nocolor", help="displays entries without any color formatting", action="store_true")
+    get.add_argument(
+        "--nocolor",
+        help="displays entries without any color formatting",
+        action="store_true",
+    )
 
     args = parser.parse_args(argv[1:])
 
@@ -194,39 +225,40 @@ def cli() -> None:
         write_file(args.log_entry)
         exit()
     if args.command == "get":
-        def bottom_rule():
-            console.rule()
+
+        def header(msg=""):
+            console.rule(f"[bold]{msg}", style="bold color(105)", align="left")
             console.print("")
-            
+
+        footer = header
+
         # `happy get today`
         if args.all == "today":
             console.print("")
-            console.rule("Today's Entries")
-            console.print("")
+            header("Today's Entries")
             read_file(today=True, flowers=args.flowers, nocolor=args.nocolor)
-            bottom_rule()
+            footer()
             exit()
 
         # `happy get all`
         elif args.all == "all":
             console.print("")
-            console.rule("All Entries")
-            console.print("")
+            header("All Entries")
             read_file(flowers=args.flowers, nocolor=args.nocolor)
-            bottom_rule()
+            footer()
 
         # `happy get random [<num>]`
         elif args.all == "random":
             console.print("")
             if args.today:
-                console.rule("Random Entries")
-                console.print("")
-                read_file(random=int(args.today), flowers=args.flowers, nocolor=args.nocolor)
+                header("Random Entries")
+                read_file(
+                    random=int(args.today), flowers=args.flowers, nocolor=args.nocolor
+                )
             else:
-                console.rule("Random Entry")
-                console.print("")
+                header("Random Entry")
                 read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
-            bottom_rule()
+            footer()
 
         # `happy get [after|before|<date>]
         else:
@@ -250,19 +282,24 @@ def cli() -> None:
             else:
                 if dt:
                     if args.all == "before" or args.all == "after":
-                        console.rule(f"Entries logged {args.all} {dt.group()}")
+                        header(f"Entries logged {args.all} {dt.group()}")
                     else:
-                        console.rule(f"Entries logged on {dt.group()}")
-                    console.print("")
+                        header(f"Entries logged on {dt.group()}")
                     read_file(
                         date=dt.group(),
                         flowers=args.flowers,
                         after=args.all == "after",
-                        before=args.all == "before", nocolor=args.nocolor
+                        before=args.all == "before",
+                        nocolor=args.nocolor,
                     )
-                    bottom_rule()
+                    footer()
                 else:
-                    console.print(Markdown("Error: please enter the date as the format `dd/mm/yyyy`"), style="error")
+                    console.print(
+                        Markdown(
+                            "Error: please enter the date as the format `dd/mm/yyyy`"
+                        ),
+                        style="error",
+                    )
 
             exit()
 
