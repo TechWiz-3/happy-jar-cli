@@ -58,7 +58,7 @@ Use `happy get all` or `happy get today` to view your logs!
 
 
 def read_file(
-    date=False, today=False, flowers=False, after=False, before=False, random=0
+    date=False, today=False, flowers=False, after=False, before=False, random=0, nocolor=False
 ):
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
@@ -80,7 +80,7 @@ For more info use `happy log -h`"""), "", style="error")
             for line in happy_file:
                 if dt_re.match(line):
                     display = True
-                    display_entry(flowers, line)
+                    display_entry(flowers, line, nocolor)
 
     elif date:
         try:  # convert user inputted string to dt object
@@ -106,53 +106,52 @@ For more info use `happy log -h`"""), "", style="error")
                         if after:  # `happy get after <date>`
                             if dt > converted_dt:
                                 display = True
-                                display_entry(flowers, line)
+                                display_entry(flowers, line, nocolor)
                         elif before:  # `happy get before <date>`
                             if dt < converted_dt:
                                 display = True
-                                display_entry(flowers, line)
+                                display_entry(flowers, line, nocolor)
                             else:
                                 break
                         else:  # `happy get <date>`
                             match = re.match(dt_re, line)
                             if match:
                                 display = True
-                                display_entry(flowers, line)
+                                display_entry(flowers, line, nocolor)
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
             lines = happy_file.readlines()
             for line in sample(lines, min(random, len(lines))):
                 display = True
-                display_entry(flowers, line)
+                display_entry(flowers, line, nocolor)
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 display = True
-                display_entry(flowers, line)
+                display_entry(flowers, line, nocolor)
     if not display:
         console.print("No entries for selected time period", style="info")
 
 
-def display_entry(flowers, line):
+def display_entry(flowers, line, nocolor):
     """displays entries with or without flowers or colors"""
     line = line.split(": ")
     date = line[0]
     entry = line[1]
-    toggle_style = ["date","entry"]
-    
-#    if nocolor:
-#        toggle_style = [None,None]
 
-    
+    toggle_style = ["date","entry"]
+    if nocolor:
+        toggle_style = ["default","default"]
+           
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     
     if line != "\n" and flowers:
         flower = choice(flower_selection)
         
-        console.print(f"{flower}{line}")
+        console.print(f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]")
     else:
         console.print(f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]")
 
@@ -187,7 +186,7 @@ def cli() -> None:
     get.add_argument(
         "--flowers", help="adds a random flower to your entry 🌼", action="store_true"
     )
-    #get.add_argument("--nocolor", help="displays entries without any color formatting", action="store_true")
+    get.add_argument("--nocolor", help="displays entries without any color formatting", action="store_true")
 
     args = parser.parse_args(argv[1:])
 
@@ -195,25 +194,25 @@ def cli() -> None:
         write_file(args.log_entry)
         exit()
     if args.command == "get":
-
+        
         # `happy get today`
         if args.all == "today":
             console.print("")
-            read_file(today=True, flowers=args.flowers)
+            read_file(today=True, flowers=args.flowers, nocolor=args.nocolor)
             exit()
 
         # `happy get all`
         elif args.all == "all":
             console.print("")
-            read_file(flowers=args.flowers)
+            read_file(flowers=args.flowers, nocolor=args.nocolor)
 
         # `happy get random [<num>]`
         elif args.all == "random":
             console.print("")
             if args.today:
-                read_file(random=int(args.today), flowers=args.flowers)
+                read_file(random=int(args.today), flowers=args.flowers, nocolor=args.nocolor)
             else:
-                read_file(random=1, flowers=args.flowers)
+                read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
 
         # `happy get [after|before|<date>]
         else:
@@ -240,7 +239,7 @@ def cli() -> None:
                         date=dt.group(),
                         flowers=args.flowers,
                         after=args.all == "after",
-                        before=args.all == "before",
+                        before=args.all == "before", nocolor=args.nocolor
                     )
                 else:
                     console.print(Markdown("Error: please enter the date as the format `dd/mm/yyyy`"), style="error")
