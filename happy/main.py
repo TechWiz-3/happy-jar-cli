@@ -103,6 +103,8 @@ def read_file(
                             if dt < converted_dt:
                                 display_entry(flowers, line)
                                 isNoBefore = False
+                            else:
+                                break
                         else:
                             match = re.match(dt_re, line)
                             if match:
