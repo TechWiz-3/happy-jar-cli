@@ -124,12 +124,18 @@ def read_file(
         print("No entries for selected time period")
 
 
+# store flower to be skipped
+skip_flower = ""
+
+
 def display_entry(flowers, line):
     """displays entries with or without flowers"""
+    global skip_flower
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     if line != "\n" and flowers:
-        flower = choice(flower_selection)
+        flower = choice([item for item in flower_selection if item != skip_flower])  # randomly choose any flower except skip_flower to avoid repetition
+        skip_flower = flower
         console.print(f"{flower}{line}")
     else:
         console.print(line)
