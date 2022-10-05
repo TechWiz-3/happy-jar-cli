@@ -17,7 +17,7 @@ jobs:
       with:
         main: happy/main
         artifact: happy
-        use-dependencies: false
+        use-dependencies: true
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -33,7 +33,7 @@ jobs:
         with:
           main: happy/main
           artifact: happy
-          use-dependencies: false
+          use-dependencies: true
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -54,6 +54,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install pyinstaller
           pyinstaller -y --name happy --onefile "happy/main.py"
           chmod 770 "./dist"
