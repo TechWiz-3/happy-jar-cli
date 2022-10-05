@@ -87,9 +87,9 @@ def read_file(
 
             dt_re = re.compile(f"^{formatted_dt}")
             with open(f"{HOME}/.happyjar.txt") as happy_file:
-                isBefore = {True: 0, False: 0} if before else {True: True}  # gets activated when before evaluates to true
-                isAfter = {True: 0, False: 0} if after else {True: True}  # gets activated when after evaluates to true
-                onDate = {True: 0, False: 0} if date and not before and date and not after else {True: True}  # gets activated when only date evaluates to true
+                isNoAfter = True
+                isNoBefore = True
+                isOnDate = True
                 for line in happy_file:
                     if line != "\n":
                         # get the date of the line
@@ -98,24 +98,26 @@ def read_file(
                         if after:
                             if dt > converted_dt:
                                 display_entry(flowers, line)
-                                isAfter[True] += 1  # takes all the non empty counts
+                                isNoAfter = False
                         elif before:
                             if dt < converted_dt:
                                 display_entry(flowers, line)
-                                isBefore[True] += 1
+                                isNoBefore = False
                         else:
                             match = re.match(dt_re, line)
                             if match:
                                 display_entry(flowers, line)
-                                onDate[True] += 1
-
-                if not isBefore[True]:  # if there is no entry with any feed back then exicute
-                    print('No entries for selected time period!\n')
-                elif not isAfter[True]:
-                    print('No entries for selected time period!\n')  
-                elif not onDate[True]:
-                    print('No entries for selected time period!\n')
-                   
+                            else:
+                                isOnDate = False
+                if after:
+                    if isNoAfter:
+                        print("No entries for selected time period!\n")
+                elif before:
+                    if isNoBefore:
+                        print("No entries for selected time period!\n")
+                elif date:
+                    if not isOnDate:
+                        print("No entries for selected time period!\n")
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
