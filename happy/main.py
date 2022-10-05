@@ -16,10 +16,10 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
 
-custom_theme = Theme({"info": "bold cyan",
+custom_theme = Theme({"info": "bold color(112)",
 "error": "bold red",
-"date": "bold blue",
-"entry": "bold italic yellow",
+"date": "color(111)",
+"entry": "bold italic default",
 "warning": "italic dim yellow"})
 
 HOME = expanduser("~")
@@ -42,7 +42,7 @@ def write_file(payload, time=None):
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print("Entry written successfully!", style="info")
+            console.print("\nEntry written successfully!\n", style="info")
     else:
         try:
             with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
@@ -53,7 +53,8 @@ def write_file(payload, time=None):
             console.print(
                 Markdown("""Jar created!  
 Entry written successfully!  
-Use `happy get all` or `happy get today` to view your logs!"""), style="info")
+Use `happy get all` or `happy get today` to view your logs!  
+"""), "", style="info")
 
 
 def read_file(
@@ -64,8 +65,7 @@ def read_file(
         console.print(
             Markdown("""Error: your happyjar has not been initialised yet.  
 To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`.  
-For more info use `happy log -h`\n"""), style="error"
-        )
+For more info use `happy log -h`"""), "", style="error")
         exit()
 
     if today:
@@ -137,13 +137,24 @@ For more info use `happy log -h`\n"""), style="error"
 
 def display_entry(flowers, line):
     """displays entries with or without flowers or colors"""
+    line = line.split(": ")
+    date = line[0]
+    entry = line[1]
+    toggle_style = ["date","entry"]
+    
+#    if nocolor:
+#        toggle_style = [None,None]
+
+    
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+    
     if line != "\n" and flowers:
         flower = choice(flower_selection)
+        
         console.print(f"{flower}{line}")
     else:
-        console.print(line)
+        console.print(f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]")
 
 
 def cli() -> None:
@@ -221,7 +232,7 @@ def cli() -> None:
             except TypeError:
                 # this triggers the command
                 # `happy get` without any other args
-                console.print(Markdown("Please use an argument after `get`"), style="warning")
+                console.print("Please use an argument after `get`\n", style="warning")
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
