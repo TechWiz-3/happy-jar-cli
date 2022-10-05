@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
 
-custom_theme = Theme({"info": "bold color(112)",
+custom_theme = Theme({"info": "bold color(39)",
 "error": "bold red",
 "date": "color(111)",
 "entry": "bold italic default",
@@ -50,7 +50,7 @@ def write_file(payload, time=None):
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print(
+            console.print("",
                 Markdown("""Jar created!  
 Entry written successfully!  
 Use `happy get all` or `happy get today` to view your logs!  
@@ -194,25 +194,39 @@ def cli() -> None:
         write_file(args.log_entry)
         exit()
     if args.command == "get":
-        
+        def bottom_rule():
+            console.rule()
+            console.print("")
+            
         # `happy get today`
         if args.all == "today":
             console.print("")
+            console.rule("Today's Entries")
+            console.print("")
             read_file(today=True, flowers=args.flowers, nocolor=args.nocolor)
+            bottom_rule()
             exit()
 
         # `happy get all`
         elif args.all == "all":
             console.print("")
+            console.rule("All Entries")
+            console.print("")
             read_file(flowers=args.flowers, nocolor=args.nocolor)
+            bottom_rule()
 
         # `happy get random [<num>]`
         elif args.all == "random":
             console.print("")
             if args.today:
+                console.rule("Random Entries")
+                console.print("")
                 read_file(random=int(args.today), flowers=args.flowers, nocolor=args.nocolor)
             else:
+                console.rule("Random Entry")
+                console.print("")
                 read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
+            bottom_rule()
 
         # `happy get [after|before|<date>]
         else:
@@ -235,12 +249,18 @@ def cli() -> None:
                 get.print_help()  # print usage for `get`
             else:
                 if dt:
+                    if args.all == "before" or args.all == "after":
+                        console.rule(f"Entries logged {args.all} {dt.group()}")
+                    else:
+                        console.rule(f"Entries logged on {dt.group()}")
+                    console.print("")
                     read_file(
                         date=dt.group(),
                         flowers=args.flowers,
                         after=args.all == "after",
                         before=args.all == "before", nocolor=args.nocolor
                     )
+                    bottom_rule()
                 else:
                     console.print(Markdown("Error: please enter the date as the format `dd/mm/yyyy`"), style="error")
 
