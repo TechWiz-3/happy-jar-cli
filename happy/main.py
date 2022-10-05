@@ -109,7 +109,7 @@ def read_file(
             for line in sample(lines, min(random, len(lines))):
                 display_entry(flowers, line)
 
-    elif not date and not today:  # assume the whole file should be console.printed
+    elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 display_entry(flowers, line)
@@ -201,7 +201,7 @@ def cli() -> None:
                 # this triggers the command
                 # `happy get` without any other args
                 console.print("Please use an argument after `get`\n")
-                get.print_help()  # console.print usage for `get`
+                get.print_help()  # print usage for `get`
             else:
                 if dt:
                     read_file(
