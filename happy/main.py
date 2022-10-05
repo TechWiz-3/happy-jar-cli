@@ -55,13 +55,8 @@ def write_file(payload, time=None):
             console.print(f"Error occurred: {err}", style="error")
         else:
             console.print(
-                "",
-                Markdown(
-                    """Jar created!  
-Entry written successfully!  
-Use `happy get all` or `happy get today` to view your logs!  
-"""
-                ),
+                "\nJar created!\nEntry written successfully!\n",
+                Markdown("Use `happy get all` or `happy get today` to view your logs!"),
                 "",
                 style="info",
             )
@@ -79,11 +74,12 @@ def read_file(
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
         console.print(
+            "Error: your happyjar has not been initialised yet.",
             Markdown(
-                """Error: your happyjar has not been initialised yet.  
-To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`.  
-For more info use `happy log -h`"""
+                "To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`."
             ),
+            "",
+            Markdown("For more info use `happy log -h`"),
             "",
             style="error",
         )
