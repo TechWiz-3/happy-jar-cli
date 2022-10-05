@@ -50,6 +50,7 @@ def write_file(payload, time=None):
 def read_file(
     date=False, today=False, flowers=False, after=False, before=False, random=0
 ):
+    display = False
     if not exists(f"{HOME}/.happyjar.txt"):
         console.print(
             "Error: your happyjar has not been initialised yet. To do that, log an entry using 'happy log \"my first log\"'.\nFor more info use 'happy log -h'\n"
@@ -67,13 +68,14 @@ def read_file(
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
+                    display = True
                     display_entry(flowers, line)
 
     elif date:
         try:  # convert user inputted string to dt object
             converted_dt = datetime.strptime(date, "%d/%m/%Y")
         except ValueError:
-            console.print("Error: please enter the date as the format dd/mm/yyyy")
+            console.print("Error occurred converting date to date object")
             exit()
         else:
             try:
@@ -90,29 +92,36 @@ def read_file(
                         # get the date of the line
                         date = line.split()[1]
                         dt = datetime.strptime(date, "%d/%b/%Y")
-                        if after:
+                        if after:  # `happy get after <date>`
                             if dt > converted_dt:
+                                display = True
                                 display_entry(flowers, line)
-                        elif before:
+                        elif before:  # `happy get before <date>`
                             if dt < converted_dt:
+                                display = True
                                 display_entry(flowers, line)
                             else:
                                 break
-                        else:
+                        else:  # `happy get <date>`
                             match = re.match(dt_re, line)
                             if match:
+                                display = True
                                 display_entry(flowers, line)
 
     elif random:  # get a random entry
         with open(f"{HOME}/.happyjar.txt") as happy_file:
             lines = happy_file.readlines()
             for line in sample(lines, min(random, len(lines))):
+                display = True
                 display_entry(flowers, line)
 
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
+                display = True
                 display_entry(flowers, line)
+    if not display:
+        print("No entries for selected time period")
 
 
 def display_entry(flowers, line):
@@ -210,6 +219,9 @@ def cli() -> None:
                         after=args.all == "after",
                         before=args.all == "before",
                     )
+                else:
+                    print("Error: please enter the date as the format dd/mm/yyyy")
+
             exit()
 
 
