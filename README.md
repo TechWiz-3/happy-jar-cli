@@ -59,6 +59,8 @@ Check [Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) for more.
 
 * [HitBlast](https://github.com/hitblast) the Mighty
 * [Diwash Dahal](https://github.com/diwash007) the Conqueror
+* [Franklin Ikeh](https://github.com/fr4nkln11) the Neat
+* [Micah Wood](https://github.com/mxw7265) the Strong
 
 ---
 ### 🎉 Commit labels
