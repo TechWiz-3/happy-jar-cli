@@ -60,9 +60,7 @@ def read_file(
         except ValueError:
             today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
-
         isTodayEmpty = True  # will return True initally
-
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
