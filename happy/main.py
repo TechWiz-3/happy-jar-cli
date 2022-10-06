@@ -21,7 +21,7 @@ custom_theme = Theme(
         "info": "bold color(39)",
         "error": "bold red",
         "date": "color(111)",
-        "entry": "bold default",
+        "entry": "default",
         "warning": "italic dim yellow",
     }
 )
@@ -177,11 +177,6 @@ def read_file(
 
 
 def display_entry(flowers, line, nocolor):
-    """displays entries with or without flowers or colors"""
-
-
-
-def display_entry(flowers, line, nocolor):
     """
     displays entries with or without flowers
     ---
@@ -285,17 +280,19 @@ def cli() -> None:
             console.print("")
             if args.today:
                 try:
-                  header("Random Entries")
-                  read_file(
-                      random=int(args.today), flowers=args.flowers, nocolor=args.nocolor
+                    random_num = int(args.today)
+                    header("Random Entries")
+                    read_file(
+                        random=random_num, flowers=args.flowers, nocolor=args.nocolor
                   )
                 except ValueError:  # a valid number wasn't provided
-                  console.print(
+                    console.print(
                         Markdown(
-                            "Error: please enter a valid number after `random` or `random` on it's own\n"
+                            "Error: please enter a valid number after `random` or `random` on it's own"
                         ),
                         style="error",)
-                  exit()
+                    print("")
+                    exit()
             else:
                 header("Random Entry")
                 read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
