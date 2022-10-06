@@ -116,16 +116,17 @@ def read_file(
                 display_entry(flowers, line)
 
     elif count:  # get count of all entries per day
-        map = {} # map to store the count of entries
+        map = {}  # map to store the count of entries
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 key = line.split()
+                # if the date hasn't already been added
                 if key[1] not in map.keys():
-                    map[key[1]]=1
-                else:
-                    map[key[1]]+=1
+                    map[key[1]] = 1
+                else:  # if date has been added
+                    map[key[1]] += 1  # increment count
         for item in map:
-            count = "" if map[item]==1 else "s"
+            count = "" if map[item] == 1 else "s"  # time/s
             output = f"You were happy {map[item]} time{count} on {item}"
             display = True
             display_entry(flowers, output)
