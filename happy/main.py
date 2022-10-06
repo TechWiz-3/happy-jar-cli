@@ -18,6 +18,10 @@ HOME = expanduser("~")
 
 console = Console(highlight=False)
 
+# stores the last flower used so
+# it can be skipped
+skip_flower = ""
+
 
 def write_file(payload, time=None):
     if time is None:
@@ -132,26 +136,28 @@ def read_file(
             display_entry(flowers, output)
             print("")
 
-    elif not date and not today:  # assume the whole file should be printed
+    else:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 display = True
                 display_entry(flowers, line)
-    if not display:
+    if not display:  # triggers if nothing was printed
         print("No entries for selected time period\n")
 
 
-# store flower to be skipped
-skip_flower = ""
-
-
 def display_entry(flowers, line):
-    """displays entries with or without flowers"""
-    global skip_flower
+    """
+    displays entries with or without flowers
+    ---
+    flowers: is set to True or False
+    line: is the entry that should be printed
+    """
+    global skip_flower  # the last flower used
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     if line != "\n" and flowers:
-        flower = choice([item for item in flower_selection if item != skip_flower])  # randomly choose any flower except skip_flower to avoid repetition
+        # randomly choose any flower except skip_flower to avoid repetition
+        flower = choice([item for item in flower_selection if item != skip_flower])
         skip_flower = flower
         console.print(f"{flower}{line}")
     else:
@@ -238,7 +244,7 @@ def cli() -> None:
             try:  # get the date provided
                 dt = re.match(date_re, date)
             except TypeError:
-                # this triggers the command
+                # this triggers with the command
                 # `happy get` without any other args
                 console.print("Please use an argument after `get`\n")
                 get.print_help()  # print usage for `get`
@@ -251,7 +257,9 @@ def cli() -> None:
                         before=args.all == "before",
                     )
                 else:
-                    print("Error: please enter the date as the format dd/mm/yyyy\n")
+                    print(
+                        "Error: incorrect usage! If you are entering a date, use the format dd/mm/yyyy\n"
+                    )
                     get.print_help()  # print usage for `get`
 
             exit()
