@@ -284,10 +284,18 @@ def cli() -> None:
         elif args.all == "random":
             console.print("")
             if args.today:
-                header("Random Entries")
-                read_file(
-                    random=int(args.today), flowers=args.flowers, nocolor=args.nocolor
-                )
+                try:
+                  header("Random Entries")
+                  read_file(
+                      random=int(args.today), flowers=args.flowers, nocolor=args.nocolor
+                  )
+                except ValueError:  # a valid number wasn't provided
+                  console.print(
+                        Markdown(
+                            "Error: please enter a valid number after `random` or `random` on it's own\n"
+                        ),
+                        style="error",)
+                  exit()
             else:
                 header("Random Entry")
                 read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
