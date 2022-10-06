@@ -207,6 +207,10 @@ def display_entry(flowers, line, nocolor):
         console.print(
             f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
         )
+    else:
+        console.print(
+            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+        )
 
 
 def cli() -> None:
