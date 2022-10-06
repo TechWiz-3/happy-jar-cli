@@ -48,7 +48,7 @@ def write_file(payload, time=None):
 
 
 def read_file(
-    date=False, today=False, flowers=False, after=False, before=False, random=0
+    date=False, today=False, flowers=False, after=False, before=False, random=0, count=False
 ):
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
