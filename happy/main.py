@@ -30,6 +30,10 @@ HOME = expanduser("~")
 
 console = Console(highlight=False, theme=custom_theme)
 
+# stores the last flower used so
+# it can be skipped
+skip_flower = ""
+
 
 def write_file(payload, time=None):
     if time is None:
@@ -69,6 +73,7 @@ def read_file(
     after=False,
     before=False,
     random=0,
+    count=False,
     nocolor=False,
 ):
     display = False
@@ -145,37 +150,62 @@ def read_file(
                 display = True
                 display_entry(flowers, line, nocolor)
 
-    elif not date and not today:  # assume the whole file should be printed
+    elif count:  # get count of all entries per day
+        map = {}  # map to store the count of entries
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                key = line.split()
+                # if the date hasn't already been added
+                if key[1] not in map.keys():
+                    map[key[1]] = 1
+                else:  # if date has been added
+                    map[key[1]] += 1  # increment count
+        for item in map:
+            count = "" if map[item] == 1 else "s"  # time/s
+            output = f"You were happy {map[item]} time{count} on {item}"
+            display = True
+            display_entry(flowers, output)
+            print("")
+
+    else:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 display = True
                 display_entry(flowers, line, nocolor)
-    if not display:
-        console.print("No entries for selected time period", style="info")
+    if not display:  # triggers if nothing was printed
+        console.print("No entries for selected time period\n", style="info")
 
 
 def display_entry(flowers, line, nocolor):
     """displays entries with or without flowers or colors"""
+
+
+
+def display_entry(flowers, line, nocolor):
+    """
+    displays entries with or without flowers
+    ---
+    flowers: is set to True or False
+    line: is the entry that should be printed
+    """
+    global skip_flower  # the last flower used
+    flower = ""
+    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
     line = line.split(": ")
     date = line[0]
     entry = line[1]
-
     toggle_style = ["date", "entry"]
     if nocolor:
         toggle_style = ["default", "default"]
 
-    flower = ""
-    flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
     if line != "\n" and flowers:
         flower = choice(flower_selection)
-
+        # randomly choose any flower except skip_flower to avoid repetition
+        flower = choice([item for item in flower_selection if item != skip_flower])
+        skip_flower = flower
         console.print(
             f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-        )
-    else:
-        console.print(
-            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
         )
 
 
@@ -203,6 +233,9 @@ def cli() -> None:
     )
     get.add_argument(
         "<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?"
+    )
+    get.add_argument(
+        "count", help="displays how many times you were happy each day", nargs="?"
     )
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
@@ -256,6 +289,11 @@ def cli() -> None:
                 read_file(random=1, flowers=args.flowers, nocolor=args.nocolor)
             footer()
 
+        # `happy get count`
+        elif args.all == "count":
+            print("")
+            read_file(count=True, flowers=args.flowers)
+
         # `happy get [after|before|<date>]
         else:
             # checks for after or until command
@@ -271,7 +309,7 @@ def cli() -> None:
             try:  # get the date provided
                 dt = re.match(date_re, date)
             except TypeError:
-                # this triggers the command
+                # this triggers with the command
                 # `happy get` without any other args
                 console.print("Please use an argument after `get`\n", style="warning")
                 get.print_help()  # print usage for `get`
@@ -292,10 +330,11 @@ def cli() -> None:
                 else:
                     console.print(
                         Markdown(
-                            "Error: please enter the date as the format `dd/mm/yyyy`"
+                            "Error: incorrect usage! If you are entering a date, use the format `dd/mm/yyyy`\n"
                         ),
                         style="error",
                     )
+                    get.print_help()  # print usage for `get`
 
             exit()
 
