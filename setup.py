@@ -16,5 +16,6 @@ setup(
     entry_points='''
         [console_scripts]
         happy=happy.main:cli
-    '''
+    ''',
+    instal_requires=["rich"],
 )
