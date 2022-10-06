@@ -138,7 +138,7 @@ def read_file(
                 display = True
                 display_entry(flowers, line)
     if not display:
-        print("No entries for selected time period")
+        print("No entries for selected time period\n")
 
 
 # store flower to be skipped
@@ -251,7 +251,8 @@ def cli() -> None:
                         before=args.all == "before",
                     )
                 else:
-                    print("Error: please enter the date as the format dd/mm/yyyy")
+                    print("Error: please enter the date as the format dd/mm/yyyy\n")
+                    get.print_help()  # print usage for `get`
 
             exit()
 
