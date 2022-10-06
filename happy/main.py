@@ -48,7 +48,7 @@ def write_file(payload, time=None):
 
 
 def read_file(
-    date=False, today=False, flowers=False, after=False, before=False, random=0
+    date=False, today=False, flowers=False, after=False, before=False, random=0, count=False
 ):
     display = False
     if not exists(f"{HOME}/.happyjar.txt"):
@@ -115,6 +115,23 @@ def read_file(
                 display = True
                 display_entry(flowers, line)
 
+    elif count:  # get count of all entries per day
+        map = {}  # map to store the count of entries
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                key = line.split()
+                # if the date hasn't already been added
+                if key[1] not in map.keys():
+                    map[key[1]] = 1
+                else:  # if date has been added
+                    map[key[1]] += 1  # increment count
+        for item in map:
+            count = "" if map[item] == 1 else "s"  # time/s
+            output = f"You were happy {map[item]} time{count} on {item}"
+            display = True
+            display_entry(flowers, output)
+            print("")
+
     elif not date and not today:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
@@ -166,6 +183,9 @@ def cli() -> None:
     get.add_argument(
         "<date>", help="gets a specified date's entries with dd/mm/yyyy", nargs="?"
     )
+    get.add_argument(
+        "count", help="displays how many times you were happy each day", nargs="?"
+    )
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
     get.add_argument(
@@ -197,6 +217,11 @@ def cli() -> None:
                 read_file(random=int(args.today), flowers=args.flowers)
             else:
                 read_file(random=1, flowers=args.flowers)
+
+        # `happy get count`
+        elif args.all == "count":
+            print("")
+            read_file(count=True, flowers=args.flowers)
 
         # `happy get [after|before|<date>]
         else:
