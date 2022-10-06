@@ -220,7 +220,13 @@ def cli() -> None:
         elif args.all == "random":
             console.print("")
             if args.today:
-                read_file(random=int(args.today), flowers=args.flowers)
+                try:
+                    read_file(random=int(args.today), flowers=args.flowers)
+                except ValueError:  # a valid number wasn't provided
+                    print(
+                        "Error: please enter a valid number after `random` or `random` on it's own\n"
+                    )
+                    exit()
             else:
                 read_file(random=1, flowers=args.flowers)
 
