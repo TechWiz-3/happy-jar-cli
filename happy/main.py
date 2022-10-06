@@ -126,8 +126,9 @@ def read_file(
                     map[key[1]]+=1
         for item in map:
             count = "" if map[item]==1 else "s"
-            str = f"You were happy {map[item]} time{count} on {item}"
-            display_entry(flowers,str)
+            output = f"You were happy {map[item]} time{count} on {item}"
+            display = True
+            display_entry(flowers, output)
             print("")
 
     elif not date and not today:  # assume the whole file should be printed
