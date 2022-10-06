@@ -186,6 +186,8 @@ def display_entry(flowers, line, nocolor):
     global skip_flower  # the last flower used
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
+
+    # format the output
     line = line.split(": ")
     date = line[0]
     entry = line[1]
@@ -193,7 +195,7 @@ def display_entry(flowers, line, nocolor):
     if nocolor:
         toggle_style = ["default", "default"]
 
-
+    # print line
     if line != "\n" and flowers:
         flower = choice(flower_selection)
         # randomly choose any flower except skip_flower to avoid repetition
@@ -284,7 +286,7 @@ def cli() -> None:
                     header("Random Entries")
                     read_file(
                         random=random_num, flowers=args.flowers, nocolor=args.nocolor
-                  )
+                    )
                 except ValueError:  # a valid number wasn't provided
                     console.print(
                         Markdown(
