@@ -25,6 +25,10 @@ jobs:
     - name: Build package
       run: python -m build
 
+    - name: Debug
+      shell: bash
+      run: ls -R
+
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
