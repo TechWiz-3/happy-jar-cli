@@ -29,14 +29,21 @@ jobs:
       shell: bash
       run: ls -R
 
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.2.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Upload release binary
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
-        repo_token: ${{ secrets.GH_TOKEN }}
-        file: ./dist/happyjar*
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: .dist/
+        asset_name: happyjar
+        asset_content_type: application/zip
       
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
