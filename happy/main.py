@@ -164,7 +164,7 @@ def read_file(
             count = "" if map[item] == 1 else "s"  # time/s
             output = f"You were happy {map[item]} time{count} on {item}"
             display = True
-            display_entry(flowers, output)
+            display_entry(flowers, output, nocolor, count=True)
             print("")
 
     else:  # assume the whole file should be printed
@@ -176,7 +176,7 @@ def read_file(
         console.print("No entries for selected time period\n", style="info")
 
 
-def display_entry(flowers, line, nocolor):
+def display_entry(flowers, line, nocolor, count=False):
     """
     displays entries with or without flowers
     ---
@@ -187,11 +187,12 @@ def display_entry(flowers, line, nocolor):
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
-    # format the output
-    line = line.split(": ")
-    date = line[0]
-    entry = line[1]
-    toggle_style = ["date", "entry"]
+    if not count:
+        # format the output
+        line = line.split(": ")
+        date = line[0]
+        entry = line[1]
+        toggle_style = ["date", "entry"]
     if nocolor:
         toggle_style = ["default", "default"]
 
@@ -201,13 +202,20 @@ def display_entry(flowers, line, nocolor):
         # randomly choose any flower except skip_flower to avoid repetition
         flower = choice([item for item in flower_selection if item != skip_flower])
         skip_flower = flower
-        console.print(
-            f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-        )
+        if count:
+            console.print(f"{flower}{line}")
+            return
+        else: # if the command isn't `get count`
+            console.print(
+                f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+                )
     else:
-        console.print(
-            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-        )
+        if count:
+            console.print(line)
+        else:  # not count
+            console.print(
+                f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+            )
 
 
 def cli() -> None:
@@ -303,7 +311,7 @@ def cli() -> None:
         # `happy get count`
         elif args.all == "count":
             print("")
-            read_file(count=True, flowers=args.flowers)
+            read_file(count=True, flowers=args.flowers, nocolor=args.nocolor)
 
         # `happy get [after|before|<date>]
         else:
