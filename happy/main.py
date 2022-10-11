@@ -205,10 +205,10 @@ def display_entry(flowers, line, nocolor, count=False):
         if count:
             console.print(f"{flower}{line}")
             return
-        else: # if the command isn't `get count`
+        else:  # if the command isn't `get count`
             console.print(
                 f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-                )
+            )
     else:
         if count:
             console.print(line)
