@@ -51,9 +51,15 @@ happy get all
 Inspired by [michelle/happy](https://github.com/michelle/happy)  
 
 ## Todo
-- [ ] Add support for markdown emojis with the `:emoji:` format. Use Textualize/rich for this.  
-
 Check [Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) for more.
+
+### Development
+
+1. Clone the repo and cd into it
+2. Ensure `poetry` is installed - `pip install poetry`
+3. Run `poetry install`
+4. Make whatever changes you need
+5. To text changes run (in project root directory) `poetry run unfollow`
 
 ## Contributors
 

@@ -17,3 +17,10 @@ When making the pull request, please ensure you tick `Allow edits by maintainers
 We also have a [Code of Conduct](./CODE_OF_CONDUCT.md) in place so please make sure to follow the given set of guidelines and thresholds while you interact with the project!  
 
 Contributors will receive recognition for their contributions to mankind (I mean this project) in the `Contributors` section of the `README.md`. You will also receive a nice title to describle your abilities and might open-source prowess.
+
+# Development Info
+1. Clone the repo and cd into it
+2. Ensure `poetry` is installed - `pip install poetry`
+3. Run `poetry install`
+4. Make whatever changes you need
+5. To text changes run (in project root directory) `poetry run unfollow`
