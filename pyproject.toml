@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "happyjar"
+version = "4.0.1"
+description = "Keep a happy jar from your terminal"
+authors = ["TechWiz-3 <programmingplus1@gmail.com>"]
+license = "GPL-3.0"
+readme = "README.md"
+packages = [{include = "happy"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+rich = "^12.6.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^5.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+unfollow = "happy.main:cli"
