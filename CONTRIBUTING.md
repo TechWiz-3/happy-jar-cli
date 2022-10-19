@@ -23,4 +23,4 @@ Contributors will receive recognition for their contributions to mankind (I mean
 2. Ensure `poetry` is installed - `pip install poetry`
 3. Run `poetry install`
 4. Make whatever changes you need
-5. To text changes run (in project root directory) `poetry run unfollow`
+5. To text changes run (in project root directory) `poetry run happy`

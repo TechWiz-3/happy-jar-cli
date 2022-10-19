@@ -19,4 +19,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-unfollow = "happy.main:cli"
+happy = "happy.main:cli"
