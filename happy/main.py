@@ -35,7 +35,9 @@ console = Console(highlight=False, theme=custom_theme)
 skip_flower = ""
 
 
-def write_file(payload, time=None):
+def write_file(payload, tag, time=None):
+    if tag is not None:
+        payload = payload + " #" + tag
     if time is None:
         time = datetime.today()
         try:
@@ -67,6 +69,7 @@ def write_file(payload, time=None):
 
 
 def read_file(
+    tag=None,
     date=False,
     today=False,
     flowers=False,
@@ -101,6 +104,13 @@ def read_file(
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
+                    display = True
+                    display_entry(flowers, line, nocolor)
+
+    elif tag is not None:
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                if line.strip().endswith(" #" + tag):
                     display = True
                     display_entry(flowers, line, nocolor)
 
@@ -173,7 +183,7 @@ def read_file(
                 display = True
                 display_entry(flowers, line, nocolor)
     if not display:  # triggers if nothing was printed
-        console.print("No entries for selected time period\n", style="info")
+        console.print("No entries for selected tag or time period\n", style="info")
 
 
 def display_entry(flowers, line, nocolor, count=False):
@@ -231,6 +241,9 @@ def cli() -> None:
 
     log = subparsers.add_parser("log", help="logs an entry")
     log.add_argument("log_entry", help="log message in quotes")
+    log.add_argument(
+        "--tag <tag-without-spaces>", dest="tag", help="tags entry with specified tag", nargs="?"
+    )
 
     get = subparsers.add_parser("get", help="gets entries")
     get.add_argument("all", help="gets all entries", nargs="?")
@@ -249,6 +262,9 @@ def cli() -> None:
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
     get.add_argument(
+        "tag <tag-without-spaces>", help="gets only entries with specified tag", nargs="?"
+    )
+    get.add_argument(
         "--flowers", help="adds a random flower to your entry 🌼", action="store_true"
     )
     get.add_argument(
@@ -260,7 +276,7 @@ def cli() -> None:
     args = parser.parse_args(argv[1:])
 
     if args.command == "log":
-        write_file(args.log_entry)
+        write_file(args.log_entry, args.tag)
         exit()
     if args.command == "get":
 
@@ -270,8 +286,15 @@ def cli() -> None:
 
         footer = header
 
+        if args.all == "tag" and args.today:
+            tag = args.today
+            console.print("")
+            header("Entries tagged with " + tag)
+            read_file(tag=tag, flowers=args.flowers, nocolor=args.nocolor)
+            footer()
+
         # `happy get today`
-        if args.all == "today":
+        elif args.all == "today":
             console.print("")
             header("Today's Entries")
             read_file(today=True, flowers=args.flowers, nocolor=args.nocolor)
