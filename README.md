@@ -67,6 +67,8 @@ Check [Issues](https://github.com/TechWiz-3/happy-jar-cli/issues) for more.
 * [Diwash Dahal](https://github.com/diwash007) the Conqueror
 * [Franklin Ikeh](https://github.com/fr4nkln11) the Neat
 * [Micah Wood](https://github.com/mxw7265) the Strong
+* [Tanmay Patil](https://github.com/TanmayPatil105) the Admirable
+* [Rishabh Moharir](https://github.com/redromnon) the Noble
 
 ---
 ### 🎉 Commit labels
