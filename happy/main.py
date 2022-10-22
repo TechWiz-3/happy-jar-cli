@@ -176,7 +176,7 @@ def read_file(
             output = f"You were happy {map[item]} time{count} on {item}"
             display = True
             display_entry(flowers, output, nocolor, count=True)
-            print("")
+        print("")
 
     elif tags:
         tags_list = []
@@ -189,12 +189,14 @@ def read_file(
         display = True
         tag_count = len(tags_list)
         if tag_count == 0:
-            display_entry(flowers, "You have not used any tags so far", nocolor, tags=True)
+            console.print("You have not used any tags so far", style="warning")
         elif tag_count == 1:
-            display_entry(flowers, f"You have used 1 tag so far:\n{tags_list[0]}", nocolor, tags=True)
+            print("You have used 1 tag so far")
+            display_entry(flowers, f"{tags_list[0]}", nocolor, tags=True)
         else:
-            printable_tags_list = '\n'.join(tags_list)
-            display_entry(flowers, f"You have used {tag_count} tags so far:\n{printable_tags_list}", nocolor, tags=True)
+            print(f"You have used {tag_count} tags so far:")
+            for tag in tags_list:
+                display_entry(flowers, tag, nocolor, tags=True)
         print("")
 
     else:  # assume the whole file should be printed
@@ -226,26 +228,33 @@ def display_entry(flowers, line, nocolor, count=False, tags=False):
     if nocolor:
         toggle_style = ["default", "default"]
 
+    if count or tags:
+        flower = choice(flower_selection)
+        # randomly choose any flower except skip_flower to avoid repetition
+        flower = choice([item for item in flower_selection if item != skip_flower])
+        skip_flower = flower
+
+        if flowers:
+            console.print(f"\n{flower}{line}")
+        else:
+            console.print(line)
+            if count:
+                print("")  # print extra newline
+        return
+
     # print line
     if line != "\n" and flowers:
         flower = choice(flower_selection)
         # randomly choose any flower except skip_flower to avoid repetition
         flower = choice([item for item in flower_selection if item != skip_flower])
         skip_flower = flower
-        if count or tags:
-            console.print(f"{flower}{line}")
-            return
-        else:  # if the command isn't `get count`
-            console.print(
-                f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-            )
-    else:
-        if count or tags:
-            console.print(line)
-        else:  # not count
-            console.print(
-                f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
-            )
+        console.print(
+            f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+        )
+    else:  # regular, no flowers entry printing
+        console.print(
+            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
+        )
 
 
 def cli() -> None:
