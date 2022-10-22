@@ -77,6 +77,7 @@ def read_file(
     before=False,
     random=0,
     count=False,
+    tags=False,
     nocolor=False,
 ):
     display = False
@@ -177,6 +178,25 @@ def read_file(
             display_entry(flowers, output, nocolor, count=True)
             print("")
 
+    elif tags:
+        tags_list = []
+        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+            for line in happy_file:
+                last_word = line.split()[-1]
+                if last_word.startswith("#"):
+                    tags_list.append(last_word[1:])
+        tags_list = list(dict.fromkeys(tags_list))  # removing duplicates
+        display = True
+        tag_count = len(tags_list)
+        if tag_count == 0:
+            display_entry(flowers, "You have not used any tags so far", nocolor, tags=True)
+        elif tag_count == 1:
+            display_entry(flowers, f"You have used 1 tag so far:\n{tags_list[0]}", nocolor, tags=True)
+        else:
+            printable_tags_list = '\n'.join(tags_list)
+            display_entry(flowers, f"You have used {tag_count} tags so far:\n{printable_tags_list}", nocolor, tags=True)
+        print("")
+
     else:  # assume the whole file should be printed
         with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
             for line in happy_file:
@@ -186,7 +206,7 @@ def read_file(
         console.print("No entries for selected tag or time period\n", style="info")
 
 
-def display_entry(flowers, line, nocolor, count=False):
+def display_entry(flowers, line, nocolor, count=False, tags=False):
     """
     displays entries with or without flowers
     ---
@@ -197,7 +217,7 @@ def display_entry(flowers, line, nocolor, count=False):
     flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
 
-    if not count:
+    if not count and not tags:
         # format the output
         line = line.split(": ")
         date = line[0]
@@ -212,7 +232,7 @@ def display_entry(flowers, line, nocolor, count=False):
         # randomly choose any flower except skip_flower to avoid repetition
         flower = choice([item for item in flower_selection if item != skip_flower])
         skip_flower = flower
-        if count:
+        if count or tags:
             console.print(f"{flower}{line}")
             return
         else:  # if the command isn't `get count`
@@ -220,7 +240,7 @@ def display_entry(flowers, line, nocolor, count=False):
                 f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}]"
             )
     else:
-        if count:
+        if count or tags:
             console.print(line)
         else:  # not count
             console.print(
@@ -258,6 +278,9 @@ def cli() -> None:
     )
     get.add_argument(
         "count", help="displays how many times you were happy each day", nargs="?"
+    )
+    get.add_argument(
+        "tags", help="displays a list of all the tags used so far", nargs="?"
     )
     get.add_argument("after <date>", help="gets all entries after a date", nargs="?")
     get.add_argument("before <date>", help="gets all entries before a date", nargs="?")
@@ -335,6 +358,11 @@ def cli() -> None:
         elif args.all == "count":
             print("")
             read_file(count=True, flowers=args.flowers, nocolor=args.nocolor)
+
+        # `happy get tags`
+        elif args.all == "tags":
+            print("")
+            read_file(tags=True, flowers=args.flowers, nocolor=args.nocolor)
 
         # `happy get [after|before|<date>]
         else:
