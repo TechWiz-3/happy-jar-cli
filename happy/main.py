@@ -23,9 +23,8 @@ custom_theme = Theme(
     }
 )
 
-DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.json")
-
 console = Console(highlight=False, theme=custom_theme)
+DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.json")
 
 # stores the last flower used so
 # it can be skipped
