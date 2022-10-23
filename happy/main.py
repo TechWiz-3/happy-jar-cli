@@ -223,7 +223,7 @@ def display_entry(flowers, line, nocolor, count=False, tags=False):
         # format the output
         line = line.split(": ")
         date = line[0]
-        entry = line[1]
+        entry = ": ".join(line[1:])  # reconstruct any split emojis
         toggle_style = ["date", "entry"]
     if nocolor:
         toggle_style = ["default", "default"]
