@@ -2,16 +2,13 @@
 # Happy jar cli, inspired by https://github.com/michelle/happy
 # Created by Zac the Wise
 # License: GPL-v3.0
-
-from datetime import datetime
-from os.path import expanduser
-from sys import argv
-from os.path import exists
-from sys import exit
-from random import choice, sample
+import re
+import os.path
 import argparse
 import textwrap
-import re
+from datetime import datetime
+from sys import argv, exit
+from random import choice, sample
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
@@ -26,7 +23,7 @@ custom_theme = Theme(
     }
 )
 
-HOME = expanduser("~")
+DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.json")
 
 console = Console(highlight=False, theme=custom_theme)
 
@@ -45,9 +42,9 @@ def write_file(payload, tag, time=None):
         except ValueError:
             time = time.strftime("%A %d/%b/%Y %I:%M %p")
 
-    if exists(f"{HOME}/.happyjar.txt"):
+    if os.path.exists(DATA_PATH):
         try:
-            with open(f"{HOME}/.happyjar.txt", "a") as happy_file:
+            with open(DATA_PATH, "a") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
@@ -55,7 +52,7 @@ def write_file(payload, tag, time=None):
             console.print("\nEntry written successfully!\n", style="info")
     else:
         try:
-            with open(f"{HOME}/.happyjar.txt", "w") as happy_file:
+            with open(DATA_PATH, "w") as happy_file:
                 happy_file.write(f"{time}: {payload}\n")
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
@@ -81,7 +78,7 @@ def read_file(
     nocolor=False,
 ):
     display = False
-    if not exists(f"{HOME}/.happyjar.txt"):
+    if not os.path.exists(DATA_PATH):
         console.print(
             "Error: your happyjar has not been initialised yet.",
             Markdown(
@@ -102,14 +99,14 @@ def read_file(
             today = time.strftime("%A %d/%b/%Y")
         dt_re = re.compile(f"^{today}")
 
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+        with open(DATA_PATH, "r") as happy_file:
             for line in happy_file:
                 if dt_re.match(line):
                     display = True
                     display_entry(flowers, line, nocolor)
 
     elif tag is not None:
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+        with open(DATA_PATH, "r") as happy_file:
             for line in happy_file:
                 if line.strip().endswith(" #" + tag):
                     display = True
@@ -132,7 +129,7 @@ def read_file(
                 formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")
 
             dt_re = re.compile(f"^{formatted_dt}")
-            with open(f"{HOME}/.happyjar.txt") as happy_file:
+            with open(DATA_PATH) as happy_file:
                 for line in happy_file:
                     if line != "\n":
                         # get the date of the line
@@ -155,7 +152,7 @@ def read_file(
                                 display_entry(flowers, line, nocolor)
 
     elif random:  # get a random entry
-        with open(f"{HOME}/.happyjar.txt") as happy_file:
+        with open(DATA_PATH) as happy_file:
             lines = happy_file.readlines()
             for line in sample(lines, min(random, len(lines))):
                 display = True
@@ -163,7 +160,7 @@ def read_file(
 
     elif count:  # get count of all entries per day
         map = {}  # map to store the count of entries
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+        with open(DATA_PATH, "r") as happy_file:
             for line in happy_file:
                 key = line.split()
                 # if the date hasn't already been added
@@ -180,7 +177,7 @@ def read_file(
 
     elif tags:
         tags_list = []
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+        with open(DATA_PATH, "r") as happy_file:
             for line in happy_file:
                 last_word = line.split()[-1]
                 if last_word.startswith("#"):
@@ -200,7 +197,7 @@ def read_file(
         print("")
 
     else:  # assume the whole file should be printed
-        with open(f"{HOME}/.happyjar.txt", "r") as happy_file:
+        with open(DATA_PATH, "r") as happy_file:
             for line in happy_file:
                 display = True
                 display_entry(flowers, line, nocolor)
