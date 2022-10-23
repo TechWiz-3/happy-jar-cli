@@ -3,6 +3,7 @@
 # Created by Zac the Wise
 # License: GPL-v3.0
 import re
+import json
 import os.path
 import argparse
 import textwrap
@@ -31,20 +32,31 @@ DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.json")
 skip_flower = ""
 
 
-def write_file(payload, tag, time=None):
-    if tag is not None:
-        payload = payload + " #" + tag
-    if time is None:
+def write_file(entry, tag, time=None):
+    file_init = {"logs": []} # initial state of .happyjar.json
+    
+    if tag: # check if --tag was used
+        entry = entry + " #" + tag
+    if not time: # check if user did not specify time
         time = datetime.today()
         try:
-            time = time.strftime("%A %-d/%b/%Y %-I:%M %p")
+            time_str = time.strftime("%A&%-d/%b/%Y&%-I:%M %p")
         except ValueError:
-            time = time.strftime("%A %d/%b/%Y %I:%M %p")
+            time_str = time.strftime("%A&%d/%b/%Y&%I:%M %p")
+        
+        day, date, clock_time = time_str.split('&')
+        message, *tags = entry.split(" #")
+        
+        payload = {"day": day, "date": date, "time": clock_time, "message": message, "tags": tags}
 
     if os.path.exists(DATA_PATH):
         try:
-            with open(DATA_PATH, "a") as happy_file:
-                happy_file.write(f"{time}: {payload}\n")
+            with open(DATA_PATH, "+r") as happy_file:
+                happy_data = json.load(happy_file)
+                happy_data["logs"].append(payload)
+                happy_file.seek(0)
+                json.dump(happy_data, happy_file, indent=4)
+                
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
@@ -52,7 +64,9 @@ def write_file(payload, tag, time=None):
     else:
         try:
             with open(DATA_PATH, "w") as happy_file:
-                happy_file.write(f"{time}: {payload}\n")
+                file_init["logs"].append(payload)
+                json.dump(file_init, happy_file, indent=4)
+                
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
