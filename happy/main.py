@@ -92,16 +92,9 @@ def read_file(
 ):
     display = False
     if not os.path.exists(DATA_PATH):
-        console.print(
-            "Error: your happyjar has not been initialised yet.",
-            Markdown(
-                "To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`."
-            ),
-            "",
-            Markdown("For more info use `happy log -h`"),
-            "",
-            style="error",
-        )
+        console.print("Error: your happyjar has not been initialised yet.",
+            Markdown("To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`."),"",
+            Markdown("For more info use `happy log -h`"),"",style="error")
         exit()
 
     if today:
@@ -110,77 +103,78 @@ def read_file(
             today = time.strftime("%A %-d/%b/%Y")
         except ValueError:
             today = time.strftime("%A %d/%b/%Y")
-        dt_re = re.compile(f"^{today}")
+        #dt_re = re.compile(f"^{today}")
 
         with open(DATA_PATH, "r") as happy_file:
-            for line in happy_file:
-                if dt_re.match(line):
+            happy_data = json.load(happy_file)
+            for log in happy_data['logs']:
+                if f"{log['day']} {log['date']}" == today:
                     display = True
-                    display_entry(flowers, line, nocolor)
+                    display_entry(flowers, log, nocolor)
 
     elif tag is not None:
         with open(DATA_PATH, "r") as happy_file:
-            for line in happy_file:
-                if line.strip().endswith(" #" + tag):
+            happy_data = json.load(happy_file)
+            for log in happy_data['logs']:
+                if tag in log['tags']:
                     display = True
-                    display_entry(flowers, line, nocolor)
+                    display_entry(flowers, log, nocolor)
 
     elif date:
         try:  # convert user inputted string to dt object
             converted_dt = datetime.strptime(date, "%d/%m/%Y")
         except ValueError:
-            console.print(
-                "Error occurred converting date to date object", style="error"
-            )
+            console.print("Error occurred converting date to date object", style="error")
             exit()
         else:
             try:
                 # format dt object
-                formatted_dt = datetime.strftime(converted_dt, "%A %-d/%b/%Y")
+                formatted_dt = datetime.strftime(converted_dt, "%-d/%b/%Y")
             except ValueError:
                 # format dt object
-                formatted_dt = datetime.strftime(converted_dt, "%A %d/%b/%Y")
+                formatted_dt = datetime.strftime(converted_dt, "%d/%b/%Y")
 
-            dt_re = re.compile(f"^{formatted_dt}")
+            # dt_re = re.compile(f"^{formatted_dt}")
             with open(DATA_PATH) as happy_file:
-                for line in happy_file:
-                    if line != "\n":
-                        # get the date of the line
-                        date = line.split()[1]
-                        dt = datetime.strptime(date, "%d/%b/%Y")
-                        if after:  # `happy get after <date>`
-                            if dt > converted_dt:
-                                display = True
-                                display_entry(flowers, line, nocolor)
-                        elif before:  # `happy get before <date>`
-                            if dt < converted_dt:
-                                display = True
-                                display_entry(flowers, line, nocolor)
-                            else:
-                                break
-                        else:  # `happy get <date>`
-                            match = re.match(dt_re, line)
-                            if match:
-                                display = True
-                                display_entry(flowers, line, nocolor)
+                happy_data = json.load(happy_file)
+                for log in happy_data['logs']:
+                    # get the date of the line
+                    date = log['date']
+                    dt = datetime.strptime(date, "%d/%b/%Y")
+                    if after:  # `happy get after <date>`
+                        if dt > converted_dt:
+                            display = True
+                            display_entry(flowers, log, nocolor)
+                    elif before:  # `happy get before <date>`
+                        if dt < converted_dt:
+                            display = True
+                            display_entry(flowers, log, nocolor)
+                        else:
+                            break
+                    else:  # `happy get <date>`
+                        if date == formatted_dt:
+                            display = True
+                            display_entry(flowers, log, nocolor)
 
     elif random:  # get a random entry
         with open(DATA_PATH) as happy_file:
-            lines = happy_file.readlines()
-            for line in sample(lines, min(random, len(lines))):
+            happy_data = json.load(happy_file)
+            logs = happy_data['logs']
+            for log in sample(logs, min(random, len(logs))):
                 display = True
-                display_entry(flowers, line, nocolor)
+                display_entry(flowers, log, nocolor)
 
     elif count:  # get count of all entries per day
         map = {}  # map to store the count of entries
         with open(DATA_PATH, "r") as happy_file:
-            for line in happy_file:
-                key = line.split()
+            happy_data = json.load(happy_file)
+            for log in happy_data['logs']:
+                key = log['date']
                 # if the date hasn't already been added
-                if key[1] not in map.keys():
-                    map[key[1]] = 1
+                if key not in map.keys():
+                    map[key] = 1
                 else:  # if date has been added
-                    map[key[1]] += 1  # increment count
+                    map[key] += 1  # increment count
         for item in map:
             count = "" if map[item] == 1 else "s"  # time/s
             output = f"You were happy {map[item]} time{count} on {item}"
@@ -191,11 +185,10 @@ def read_file(
     elif tags:
         tags_list = []
         with open(DATA_PATH, "r") as happy_file:
-            for line in happy_file:
-                last_word = line.split()[-1]
-                if last_word.startswith("#"):
-                    tags_list.append(last_word[1:])
-        tags_list = list(dict.fromkeys(tags_list))  # removing duplicates
+            happy_data = json.load(happy_file)
+            for log in happy_data['logs']:
+                tags_list.extend(log['tags'])
+        tags_list = list(set(tags_list))  # removing duplicates
         display = True
         tag_count = len(tags_list)
         if tag_count == 0:
@@ -211,9 +204,10 @@ def read_file(
 
     else:  # assume the whole file should be printed
         with open(DATA_PATH, "r") as happy_file:
-            for line in happy_file:
+            happy_data = json.load(happy_file)
+            for log in happy_data['logs']:
                 display = True
-                display_entry(flowers, line, nocolor)
+                display_entry(flowers, log, nocolor)
     if not display:  # triggers if nothing was printed
         console.print("No entries for selected tag or time period\n", style="info")
 
