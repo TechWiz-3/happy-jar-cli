@@ -2,14 +2,15 @@
 # Happy jar cli, inspired by https://github.com/michelle/happy
 # Created by Zac the Wise
 # License: GPL-v3.0
-import re
+import argparse
 import json
 import os.path
-import argparse
+import re
 import textwrap
 from datetime import datetime
-from sys import argv, exit
 from random import choice, sample
+from sys import argv, exit
+
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
@@ -32,56 +33,57 @@ OLD_DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.txt")
 # stores the last flower used so
 # it can be skipped
 skip_flower = ""
- 	       
+
+
 def write_file(entry, tag, time=None):
-    file_init = {"logs": []} # initial state of .happyjar.json
-    
-    if tag: # check if --tag was used
+    file_init = {"logs": []}  # initial state of .happyjar.json
+
+    if tag:  # check if --tag was used
         entry = entry + " #" + tag
-    if not time: # check if user did not specify time
+    if not time:  # check if user did not specify time
         time = datetime.today()
         try:
             time_str = time.strftime("%A&%-d/%b/%Y&%-I:%M %p")
         except ValueError:
             time_str = time.strftime("%A&%d/%b/%Y&%I:%M %p")
-        
+
         day, date, clock_time = time_str.split('&')
         message, *tags = entry.split(" #")
-        
+
         payload = {"day": day, "date": date, "time": clock_time, "message": message, "tags": tags}
 
-    if os.path.exists(DATA_PATH): #checks for an existing .json data_file
+    if os.path.exists(DATA_PATH):  # checks for an existing .json data_file
         try:
             with open(DATA_PATH, "+r") as happy_file:
                 happy_data = json.load(happy_file)
                 happy_data["logs"].append(payload)
                 happy_file.seek(0)
                 json.dump(happy_data, happy_file, indent=4)
-                
+
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
             console.print("\nEntry written successfully!\n", style="info")
-    else: # create a new .json file
+    else:  # create a new .json file
         try:
             with open(DATA_PATH, "w") as happy_file:
                 old_payload = []
-                if os.path.exists(OLD_DATA_PATH): # check if user has the old .txt file
+                if os.path.exists(OLD_DATA_PATH):  # check if user has the old .txt file
                     with open(OLD_DATA_PATH, 'r') as old_file:
                         for line in old_file:
                             line = line[:-1].split(": ")
                             day, date, *time = line[0].split()
                             time = ' '.join(time)
                             message, *tags = line[1].split(" #")
-                            old_payload.append({"day": day, "date": date, "time": time, "message": message, "tags": tags}) 
-                file_init["logs"].extend(old_payload) # add data from .txt to the .json file first
+                            old_payload.append({"day": day, "date": date, "time": time, "message": message, "tags": tags})
+                file_init["logs"].extend(old_payload)  # add data from .txt to the .json file first
                 file_init["logs"].append(payload)
                 json.dump(file_init, happy_file, indent=4)
-                
+
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print("\nJar created!\nEntry written successfully!\n",Markdown("Use `happy get all` or `happy get today` to view your logs!"),"",style="info")
+            console.print("\nJar created!\nEntry written successfully!\n", Markdown("Use `happy get all` or `happy get today` to view your logs!"), "", style="info")
 
 
 def read_file(
@@ -99,8 +101,8 @@ def read_file(
     display = False
     if not os.path.exists(DATA_PATH):
         console.print("Error: your happyjar has not been initialised yet.",
-            Markdown("To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`."),"",
-            Markdown("For more info use `happy log -h`"),"",style="error")
+                      Markdown("To initialise your happyjar, log an entry using `happy log <YOUR_ENTRY>`."), "",
+                      Markdown("For more info use `happy log -h`"), "", style="error")
         exit()
 
     if today:
@@ -111,7 +113,7 @@ def read_file(
             today = time.strftime("%A %d/%b/%Y")
 
         with open(DATA_PATH, "r") as happy_file:
-            happy_data = json.load(happy_file) # converts json file to dictionary
+            happy_data = json.load(happy_file)  # converts json file to dictionary
             for log in happy_data['logs']:
                 if f"{log['day']} {log['date']}" == today:
                     display = True
@@ -224,27 +226,27 @@ def display_entry(flowers, log, nocolor, string=False):
     nocolor: specifies entry output should be formatted with color
     string: specifies if the log is in string form which requires direct output
     """
-    
+
     global skip_flower  # the last flower used
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
-    
+
     if flowers:
         # randomly choose any flower except skip_flower to avoid repetition
         flower = choice([item for item in flower_selection if item != skip_flower])
         skip_flower = flower
     else:
         flower = ""
-    
+
     # display the output directly strings
     if string:
         console.print(f"{flower}{log}")
         return
-    
+
     # extract data from log
     date = log['day'] + log['date'] + log['time']
     entry = log['message']
     tags = " ".join(f"#{tag}" for tag in log['tags'])
-    
+
     # toggle whether to display colors or not
     toggle_style = ["date", "message", "tags"]
     if nocolor:
@@ -307,7 +309,7 @@ def cli() -> None:
     if args.command == "log":
         write_file(args.log_entry, args.tag)
         exit()
-        
+
     if args.command == "get":
 
         def header(msg=""):
