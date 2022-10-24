@@ -50,7 +50,7 @@ def write_file(entry, tag, time=None):
         
         payload = {"day": day, "date": date, "time": clock_time, "message": message, "tags": tags}
 
-    if os.path.exists(DATA_PATH):
+    if os.path.exists(DATA_PATH): #checks for an existing .json data_file
         try:
             with open(DATA_PATH, "+r") as happy_file:
                 happy_data = json.load(happy_file)
@@ -62,21 +62,26 @@ def write_file(entry, tag, time=None):
             console.print(f"Error occurred: {err}", style="error")
         else:
             console.print("\nEntry written successfully!\n", style="info")
-    else:
+    else: # create a new .json file
         try:
             with open(DATA_PATH, "w") as happy_file:
+                old_payload = []
+                if os.path.exists(OLD_DATA_PATH): # check if user has the old .txt file
+                    with open(OLD_DATA_PATH, 'r') as old_file:
+                        for line in old_file:
+                            line = line[:-1].split(": ")
+                            day, date, *time = line[0].split()
+                            time = ' '.join(time)
+                            message, *tags = line[1].split(" #")
+                            old_payload.append({"day": day, "date": date, "time": time, "message": message, "tags": tags}) 
+                file_init["logs"].extend(old_payload) # add data from .txt to the .json file first
                 file_init["logs"].append(payload)
                 json.dump(file_init, happy_file, indent=4)
                 
         except Exception as err:
             console.print(f"Error occurred: {err}", style="error")
         else:
-            console.print(
-                "\nJar created!\nEntry written successfully!\n",
-                Markdown("Use `happy get all` or `happy get today` to view your logs!"),
-                "",
-                style="info",
-            )
+            console.print("\nJar created!\nEntry written successfully!\n",Markdown("Use `happy get all` or `happy get today` to view your logs!"),"",style="info")
 
 
 def read_file(
