@@ -18,20 +18,21 @@ custom_theme = Theme(
     {
         "info": "bold color(39)",
         "error": "bold red",
-        "date": "color(111)",
-        "entry": "default",
+        "date": "bold color(111)",
+        "message": "default",
+        "tags": "bold color(141)",
         "warning": "italic dim yellow",
     }
 )
 
 console = Console(highlight=False, theme=custom_theme)
 DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.json")
+OLD_DATA_PATH = os.path.join(os.getenv("HOME"), ".happyjar.txt")
 
 # stores the last flower used so
 # it can be skipped
 skip_flower = ""
-
-
+ 	       
 def write_file(entry, tag, time=None):
     file_init = {"logs": []} # initial state of .happyjar.json
     
@@ -103,10 +104,9 @@ def read_file(
             today = time.strftime("%A %-d/%b/%Y")
         except ValueError:
             today = time.strftime("%A %d/%b/%Y")
-        #dt_re = re.compile(f"^{today}")
 
         with open(DATA_PATH, "r") as happy_file:
-            happy_data = json.load(happy_file)
+            happy_data = json.load(happy_file) # converts json file to dictionary
             for log in happy_data['logs']:
                 if f"{log['day']} {log['date']}" == today:
                     display = True
@@ -134,7 +134,6 @@ def read_file(
                 # format dt object
                 formatted_dt = datetime.strftime(converted_dt, "%d/%b/%Y")
 
-            # dt_re = re.compile(f"^{formatted_dt}")
             with open(DATA_PATH) as happy_file:
                 happy_data = json.load(happy_file)
                 for log in happy_data['logs']:
@@ -177,10 +176,9 @@ def read_file(
                     map[key] += 1  # increment count
         for item in map:
             count = "" if map[item] == 1 else "s"  # time/s
-            output = f"You were happy {map[item]} time{count} on {item}"
+            output = f"You were happy {map[item]} time{count} on {item}\n"
             display = True
-            display_entry(flowers, output, nocolor)
-        print("")
+            display_entry(flowers, output, nocolor, string=True)
 
     elif tags:
         tags_list = []
@@ -188,19 +186,19 @@ def read_file(
             happy_data = json.load(happy_file)
             for log in happy_data['logs']:
                 tags_list.extend(log['tags'])
-        tags_list = list(set(tags_list))  # removing duplicates
+        tags_list = list(dict.fromkeys(tags_list))  # removing duplicates
         display = True
         tag_count = len(tags_list)
         if tag_count == 0:
             console.print("You have not used any tags so far", style="warning")
         elif tag_count == 1:
-            print("You have used 1 tag so far")
+            console.print("You have used 1 tag so far")
             display_entry(flowers, f"{tags_list[0]}", nocolor, tags=True)
         else:
-            print(f"You have used {tag_count} tags so far:")
+            console.print(f"You have used {tag_count} tags so far:")
             for tag in tags_list:
-                display_entry(flowers, tag, nocolor)
-        print("")
+                display_entry(flowers, tag, nocolor, string=True)
+        console.print("")
 
     else:  # assume the whole file should be printed
         with open(DATA_PATH, "r") as happy_file:
@@ -223,44 +221,32 @@ def display_entry(flowers, log, nocolor, string=False):
     """
     
     global skip_flower  # the last flower used
-    flower = ""
     flower_selection = ["🌼 ", "🍀 ", "🌻 ", "🌺 ", "🌹 ", "🌸 ", "🌷 ", "💐 ", "🏵️  "]
-
+    
+    if flowers:
+        # randomly choose any flower except skip_flower to avoid repetition
+        flower = choice([item for item in flower_selection if item != skip_flower])
+        skip_flower = flower
+    else:
+        flower = ""
+    
+    # display the output directly strings
+    if string:
+        console.print(f"{flower}{log}")
+        return
+    
     # extract data from log
     date = log['day'] + log['date'] + log['time']
     entry = log['message']
-    tags = log['tags']
-    toggle_style = ["date", "entry"]
+    tags = " ".join(f"#{tag}" for tag in log['tags'])
+    
+    # toggle whether to display colors or not
+    toggle_style = ["date", "message", "tags"]
     if nocolor:
-        toggle_style = ["default", "default"]
-
-    if string:
-        flower = choice(flower_selection)
-        # randomly choose any flower except skip_flower to avoid repetition
-        flower = choice([item for item in flower_selection if item != skip_flower])
-        skip_flower = flower
-
-        if flowers:
-            console.print(f"\n{flower} {log}")
-        else:
-            console.print(log)
-            if count:
-                print("")  # print extra newline
-        return
+        toggle_style = ["default", "default", "default"]
 
     # print line
-    if flowers:
-        flower = choice(flower_selection)
-        # randomly choose any flower except skip_flower to avoid repetition
-        flower = choice([item for item in flower_selection if item != skip_flower])
-        skip_flower = flower
-        console.print(
-            f"{flower} [{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]\"{entry}\" #{' #'.join(tags)}[/{toggle_style[1]}]"
-        )
-    else:  # regular, no flowers entry printing
-        console.print(
-            f"[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]\"{entry}\" #{' #'.join(tags)}[/{toggle_style[1]}]"
-        )
+    console.print(f"{flower}[{toggle_style[0]}][{date}][/{toggle_style[0]}]: [{toggle_style[1]}]{entry}[/{toggle_style[1]}] [{toggle_style[2]}]{tags}[/{toggle_style[2]}]\n")
 
 
 def cli() -> None:
@@ -316,6 +302,7 @@ def cli() -> None:
     if args.command == "log":
         write_file(args.log_entry, args.tag)
         exit()
+        
     if args.command == "get":
 
         def header(msg=""):
@@ -358,9 +345,7 @@ def cli() -> None:
                     )
                 except ValueError:  # a valid number wasn't provided
                     console.print(
-                        Markdown(
-                            "Error: please enter a valid number after `random` or `random` on it's own"
-                        ),
+                        Markdown("Error: please enter a valid number after `random` or `random` on it's own"),
                         style="error",)
                     print("")
                     exit()
@@ -371,13 +356,17 @@ def cli() -> None:
 
         # `happy get count`
         elif args.all == "count":
-            print("")
+            console.print("")
+            header("Happyjar count")
             read_file(count=True, flowers=args.flowers, nocolor=args.nocolor)
+            footer()
 
         # `happy get tags`
         elif args.all == "tags":
-            print("")
+            console.print("")
+            header("Tags")
             read_file(tags=True, flowers=args.flowers, nocolor=args.nocolor)
+            footer()
 
         # `happy get [after|before|<date>]
         else:
@@ -414,9 +403,7 @@ def cli() -> None:
                     footer()
                 else:
                     console.print(
-                        Markdown(
-                            "Error: incorrect usage! If you are entering a date, use the format `dd/mm/yyyy`\n"
-                        ),
+                        Markdown("Error: incorrect usage! If you are entering a date, use the format `dd/mm/yyyy`\n"),
                         style="error",
                     )
                     get.print_help()  # print usage for `get`
