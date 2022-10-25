@@ -243,7 +243,7 @@ def display_entry(flowers, log, nocolor, string=False):
         return
 
     # extract data from log
-    date = log['day'] + log['date'] + log['time']
+    date = f"{log['day']} {log['date']} {log['time']}"
     entry = log['message']
     tags = " ".join(f"#{tag}" for tag in log['tags'])
 
