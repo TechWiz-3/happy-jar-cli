@@ -36,19 +36,37 @@ skip_flower = ""
 
 
 def write_file(entry, tag, time=None):
+    """
+    logs are stored in a 'logs' array
+    the logs array contains an object for each log
+    each object contains the following
+    day: day of the week
+    date: dd/mm/yyyy
+    time: h:mm AM/PM
+    message: the actual log
+    tags: array of tags
+    """
+
     file_init = {"logs": []}  # initial state of .happyjar.json
 
     if tag:  # check if --tag was used
+        # add the tag to the entry text
         entry = entry + " #" + tag
+        # the tag will be unpacked from the entry later
     if not time:  # check if user did not specify time
         time = datetime.today()
+        # format datetime to be
+        # day&date&time
         try:
             time_str = time.strftime("%A&%-d/%b/%Y&%-I:%M %p")
         except ValueError:
             time_str = time.strftime("%A&%d/%b/%Y&%I:%M %p")
-
+        # unpack datetime
         day, date, clock_time = time_str.split('&')
+
+        # get tags passed into the message
         message, *tags = entry.split(" #")
+        print(message, tags, *tags)
 
         payload = {"day": day, "date": date, "time": clock_time, "message": message, "tags": tags}
 
@@ -64,7 +82,7 @@ def write_file(entry, tag, time=None):
             console.print(f"Error occurred: {err}", style="error")
         else:
             console.print("\nEntry written successfully!\n", style="info")
-    else:  # create a new .json file
+    else:  # migrate happyjar.txt to happyjar.json
         try:
             with open(DATA_PATH, "w") as happy_file:
                 old_payload = []
@@ -222,7 +240,7 @@ def display_entry(flowers, log, nocolor, string=False):
     displays entries with or without flowers
     ---
     flowers: is set to True or False
-    log: data for entry output
+    log: entry object as a dict with date, day, tags and log
     nocolor: specifies entry output should be formatted with color
     string: specifies if the log is in string form which requires direct output
     """
