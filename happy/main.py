@@ -67,6 +67,10 @@ def cli() -> None:
 
     args = parser.parse_args(argv[1:])
 
+    if not args.command:
+        parser.print_help()
+        exit()
+
     if args.command == "log":
         write_file(args.log_entry, args.tag)
         exit()
