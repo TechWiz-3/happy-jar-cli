@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import choice, sample
 from sys import exit
 
@@ -130,6 +130,8 @@ def read_file(
     tag=None,
     date=False,
     today=False,
+    lastndays=False,
+    days=0,
     flowers=False,
     after=False,
     before=False,
@@ -156,6 +158,18 @@ def read_file(
             happy_data = json.load(happy_file)  # converts json file to dictionary
             for log in happy_data['logs']:
                 if f"{log['day']} {log['date']}" == today:
+                    display = True
+                    display_entry(flowers, log, nocolor)
+
+    if lastndays:
+        inital_time = datetime.today() - timedelta(days=days)
+
+        with open(DATA_PATH, "r") as happy_file:
+            happy_data = json.load(happy_file)  # converts json file to dictionary
+            for log in happy_data['logs']:
+                date = log['date']
+                dt = datetime.strptime(date, "%d/%b/%Y")
+                if dt > inital_time:
                     display = True
                     display_entry(flowers, log, nocolor)
 

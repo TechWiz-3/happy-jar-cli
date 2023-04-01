@@ -37,6 +37,8 @@ def cli() -> None:
     get = subparsers.add_parser("get", help="gets entries")
     get.add_argument("all", help="gets all entries", nargs="?")
     get.add_argument("today", help="gets today's entries", nargs="?")
+    get.add_argument("week", help="gets the week's entries", nargs="?")
+    get.add_argument("month", help="gets the months's entries", nargs="?")
     get.add_argument("before today", help="gets all entries before today", nargs="?")
     get.add_argument("random", help="gets a random entry", nargs="?")
     get.add_argument(
@@ -95,6 +97,22 @@ def cli() -> None:
             console.print("")
             header("Today's Entries")
             read_file(today=True, flowers=args.flowers, nocolor=args.nocolor)
+            footer()
+            exit()
+
+        # `happy get week`
+        elif args.all == "week":
+            console.print("")
+            header("This Week's Entries")
+            read_file(lastndays=True, days=7, flowers=args.flowers, nocolor=args.nocolor)
+            footer()
+            exit()
+
+        # `happy get month`
+        elif args.all == "month":
+            console.print("")
+            header("This Months's Entries")
+            read_file(lastndays=True, days=30, flowers=args.flowers, nocolor=args.nocolor)
             footer()
             exit()
 
